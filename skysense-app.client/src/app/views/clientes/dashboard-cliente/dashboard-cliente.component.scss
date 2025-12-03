@@ -1,0 +1,23 @@
+.imagenCliente{
+    border-radius: 3px;
+    height: 30px;
+}
+
+.cards{
+    height:100%;
+}
+.cards>c-card-body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+c-widget-stat-f{
+    height: 100%;
+}
+
+.cards div:nth-child(2){
+    font-weight: bold;
+    font-size: large;
+}

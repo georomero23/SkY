@@ -1,0 +1,303 @@
+<div class="reporte-automatico m-3">
+   <div class="reporte-header d-flex p-3 text-bold">
+      <div class="fw-bold">
+         REPORTE MENSUAL
+      </div>
+      <div>
+         <img src="assets/images/Reportes/logoReporte.png" height="75" />
+      </div>
+   </div>
+   <div class="p-3">
+      <div class="row">
+         <div class="col-2 texto-label">
+            Cliente
+         </div>
+         <div class="col-4 texto-valor">
+            {{_reportData?.cliente || '-'}}
+         </div>
+         <div class="col-1 texto-label">
+            RPU
+         </div>
+         <div class="col-2 texto-valor">
+            {{_reportData?.rpu || '-'}}
+         </div>
+         <div class="col-3 texto-label">
+            Nombre en recibo
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-2 texto-label">
+            Dirección
+         </div>
+         <div class="col-4 texto-valor">
+            {{_reportData?.direccion || '-'}}
+         </div>
+         <div class="col-1 texto-label">
+            Periodo
+         </div>
+         <div class="col-2 texto-valor">
+            {{_reportData?.periodo || '-'}}
+         </div>
+         <div class="col-3 texto-valor">
+            {{_reportData?.nombreEnRecibo || '-'}}
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-6">
+            <div class="seccion-header d-flex cap-ins mb-3">
+               <div>
+                  Capacidad instalada
+               </div>
+               <div>
+                  {{_reportData?.capacidadInstalada | zeroToDash}}
+               </div>
+               <div>
+                  kWp
+               </div>
+            </div>
+            <div class="my-3">
+               <table class="zebra w-100 tabla-ahorro">
+                  <tr>
+                     <td class="fw-bold" width="40%">PAGO SIN PANELES</td>
+                     <td width="40%"><div class="dinero">{{_reportData?.pagoSinPaneles | zeroToDash}}</div></td>
+                     <td width="20%"></td>
+                  </tr>
+                  <tr>
+                     <td class="fw-bold" width="40%">PAGO CON PANELES</td>
+                     <td width="40%"><div class="dinero">{{_reportData?.pagoConPaneles | zeroToDash}}</div></td>
+                  </tr>
+                  <tr>
+                     <td class="fw-bold" width="40%">AHORRO</td>
+                     <td width="40%"><div class="dinero">{{_reportData?.ahorro | zeroToDash}}</div></td>
+                     <td width="20%" style="text-align:right">{{_reportData?.porcentajeAhorro | zeroToDash}}%</td>
+                  </tr>
+               </table>
+            </div>
+            <div>
+               <table class="zebra w-100">
+                  <tr>
+                     <td width="40%">
+                        CONSUMO TOTAL [KwH]
+                     </td>
+                     <td width="30%" style="text-align:right">
+                        {{_reportData?.consumoTotal | zeroToDash}}
+                     </td>
+                     <td width="30%" style="text-align:right">
+                        {{_reportData?.consumoTotalPorcentaje | zeroToDash}}%
+                     </td>
+                  </tr>
+                  <tr>
+                     <td width="40%">
+                        CONSUMO A CFE [KwH]
+                     </td>
+                     <td width="30%" style="text-align:right">
+                        {{_reportData?.consumoCFE | zeroToDash}}
+                     </td>
+                     <td width="30%" style="text-align:right">
+                        {{_reportData?.consumoCFEPorcentaje | zeroToDash}}%
+                     </td>
+                  </tr>
+                  <tr>
+                     <td width="40%">
+                        CONSUMO DE PANELES [KwH]
+                     </td>
+                     <td width="30%" style="text-align:right">
+                        {{_reportData?.consumoPaneles | zeroToDash}}
+                     </td>
+                     <td width="30%" style="text-align:right">
+                        {{_reportData?.consumoPanelesPorcentaje | zeroToDash}}%
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <div class="seccion-header">
+               <div>
+                  Generación periodo
+               </div>
+               <div>
+                  {{_reportData?.generacionPeriodo}}
+               </div>
+               <div>
+                  kWh
+               </div>
+            </div>
+            <div class="seccion-header">
+               <div>
+                  DESGLOSE RECIBO DE LUZ
+               </div>
+            </div>
+            <table class="zebra zebra-header w-100">
+               <tr>
+                  <th width="40%">CONCEPTOS DE COBRANZA</th>
+                  <th width="20%">C/Paneles</th>
+                  <th width="20%">S/Paneles</th>
+                  <th width="20%">AHORRO</th>
+               </tr>
+               <tr>
+                  <td>Fijo</td>
+                  <td><div class="dinero">{{_reportData?.fijoCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.fijoSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.fijoAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Base</td>
+                  <td><div class="dinero">{{_reportData?.baseCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.baseSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.baseAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Intermedia</td>
+                  <td><div class="dinero">{{_reportData?.intermediaCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.intermediaSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.intermediaAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Punta</td>
+                  <td><div class="dinero">{{_reportData?.puntaCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.puntaSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.puntaAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Transmisión</td>
+                  <td><div class="dinero">{{_reportData?.transmisionCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.transmisionSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.transmisionAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>CENACE</td>
+                  <td><div class="dinero">{{_reportData?.cenacecPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.cenacesPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.cenaceAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>SCNMEM</td>
+                  <td><div class="dinero">{{_reportData?.scnmemcPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.scnmemsPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.scnmemAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Distribución</td>
+                  <td><div class="dinero">{{_reportData?.distribucionCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.distribucionSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.distribucionAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Capacidad</td>
+                  <td><div class="dinero">{{_reportData?.capacidadCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.capacidadSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.capacidadAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Energía</td>
+                  <td><div class="dinero">{{_reportData?.energiaCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.energiaSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.energiaAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Factor de Potencia</td>
+                  <td><div class="dinero">{{_reportData?.factorPotenciaCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.factorPotenciaSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.factorPotenciaAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>Subtotal</td>
+                  <td><div class="dinero">{{_reportData?.subtotalCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.subtotalSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.subtotalAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>DAP</td>
+                  <td><div class="dinero">{{_reportData?.dapcPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.dapsPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.dapahorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>IVA</td>
+                  <td><div class="dinero">{{_reportData?.ivacPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.ivasPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.ivAhorro | zeroToDash}}</div></td>
+               </tr>
+               <tr>
+                  <td>TOTAL</td>
+                  <td><div class="dinero">{{_reportData?.totalCPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.totalSPaneles | zeroToDash}}</div></td>
+                  <td><div class="dinero">{{_reportData?.totalAhorro | zeroToDash}}</div></td>
+               </tr>
+            </table>
+            <div class="seccion-header">
+               <div>
+                  AHORRO ACUMULADO S/IVA*
+               </div>
+               <div>
+                  <div class="dinero">
+                     {{_reportData?.ahorroAcumuladoSIva | zeroToDash}}
+                  </div>
+               </div>
+            </div>
+            <div class="seccion-header">
+               APORTE AL MEDIO AMBIENTE
+            </div>
+            <div class="d-flex flex-row justify-content-around mt-4 texto-ambiente">
+               <div class="text-center">
+                  <div>
+                     {{_reportData?.aporteArboles}}
+                  </div>
+                  <img src="assets/images/Reportes/arboles.png" height="200">
+               </div>
+               <div class="text-center">
+                  <div>
+                     {{_reportData?.aporteCO2}}&nbsp;tCO2e.**
+                  </div>
+                  <img src="assets/images/Reportes/coche.png" height="200">
+               </div>
+            </div>
+            <div class="texto-info">
+               <p>**Factor de emisión eléctrico para el reporte (Secretaría de Medio Ambiente y Recursos Naturales)</p>
+               <p>*Ahorro acumulado desde {{_reportData?.ahorroAcumuladoDesde}}</p>
+            </div>
+         </div>
+         <div class="col-6">
+            <div class="seccion-header">
+               % CUMPLIMIENTO GENERACIÓN ESPERADO
+            </div>
+            <div class="contenedor-grafica-1">
+               <c-chart (chartRef)="ChartRefChanged(1,$event)" type="bar" [data]="_barChartData" [options]="_barChartOptions"></c-chart>
+            </div>
+            <div class="d-flex flex-row justify-content-between">
+               <div class="texto-info">Deficiente</div>
+               <div class="texto-info">Sobresaliente</div>
+            </div>
+            <div class="contenedor-grafica-2-3">
+               <div class="mr-2">
+                  <div class="seccion-header">
+                     GENERACIÓN DIARIA [kWh]
+                  </div>
+                  <div class="w-100 c-2-3">
+                     <c-chart (chartRef)="ChartRefChanged(2,$event)" type="bar" [data]="_barChartData2" [options]="_barChartOptions2"></c-chart>
+                  </div>
+               </div>
+               <div>
+                  <div class="seccion-header">
+                     CONSUMO
+                  </div>
+                  <div class="w-100 c-2-3">
+                     <c-chart (chartRef)="ChartRefChanged(3,$event)" type="bar" [data]="_barChartData3" [options]="_barChartOptions3"></c-chart>
+                  </div>
+               </div>
+            </div>
+            <div class="seccion-header">
+               HISTÓRICO DE GENERACIÓN PV (kWh)
+            </div>
+            <div class="w-100 mb-3 contenedor-grafica-linea" >
+               <c-chart (chartRef)="ChartRefChanged(4,$event)" type="line" [data]="_lineChartData" [options]="_lineChartOptions"></c-chart>
+            </div>
+            <div class="seccion-header">
+               HISTÓRICO DE CONSUMOS (kWh)
+            </div>
+            <div class="w-100 mb-3 contenedor-grafica-linea" >
+               <c-chart (chartRef)="ChartRefChanged(5,$event)" type="line" [data]="_lineChartData2" [options]="_lineChartOptions2"></c-chart>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

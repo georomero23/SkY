@@ -1,0 +1,19 @@
+svg{
+    color: var(--cui-primary);
+}
+
+.alineense,.alineense2{
+    height: 100%;
+    text-align: center;
+}
+
+.alineense>.card-body{
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.alineense2>.card-body{
+    justify-content: center;
+    display: flex;
+}

@@ -1,0 +1,36 @@
+<h3>Información del Cliente</h3>
+          <form #formInfo="ngForm" cForm>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>Nombre/Razón Social</label>
+                <input cFormControl name="nombre" [(ngModel)]="infoCliente.nombre" class="form-control" required />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>RFC</label>
+                <input cFormControl name="rfc" [(ngModel)]="infoCliente.rfc" class="form-control" />
+              </div>
+              </div>
+            <h4>Contacto</h4>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>Nombre contacto</label>
+                <input cFormControl name="nombreContacto" [(ngModel)]="infoCliente.contacto" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Teléfono</label>
+                <input cFormControl name="telefono" [(ngModel)]="infoCliente.telefono" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Email</label>
+                <input cFormControl name="email" [(ngModel)]="infoCliente.correo" type="email" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="form-check">
+                  <input cFormControl type="checkbox" name="clienteEspecial" [(ngModel)]="infoCliente.esEspecial"
+                    class="form-check-input" />
+                  <label class="form-check-label" for="clienteEspecial">¿Es cliente especial?</label>
+                </div>
+              </div>
+            </div>
+            <button cButton color="primary" type="submit" (click)="GuardaInfoCliente()">Guardar</button>
+          </form>

@@ -1,0 +1,30 @@
+<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
+  <c-container>
+    <c-row class="justify-content-center">
+      <c-col lg="7" md="9" xl="6">
+        <c-card class="mx-4">
+          <c-card-body class="p-4">
+            <form #customStylesForm="ngForm"
+                (ngSubmit)="onSubmit1()"
+                [validated]="customStylesValidated"
+                cForm
+                class="needs-validation" [formGroup]="restablecerForm">
+              <h1>Restablecer constraseña</h1>
+              <p class="text-body-secondary">Ingresa el correo electrónico que tienes registrado para esta cuenta y te enviaremos un correo para recuperar tu contraseña.</p>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilUser"></svg>
+                </span>
+                <input formControlName="correo" autoComplete="email" required #correo cFormControl placeholder="Correo electrónico" />
+                <c-form-feedback [valid]="false">Ingrese su correo electrónico.</c-form-feedback>
+              </c-input-group>
+              <div class="d-grid">
+                <button cButton color="success"  type="submit">Enviar correo</button>
+              </div>
+            </form>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>

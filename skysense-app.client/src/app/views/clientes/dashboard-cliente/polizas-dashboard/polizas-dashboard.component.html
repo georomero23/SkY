@@ -1,0 +1,92 @@
+<c-card>
+    <c-card-header>
+        <span class="float-end">
+            <button *ngIf="accion!=1" cButton color="primary" size="sm" (click)="isModalVisible = true"><svg [cIcon]="iconos.cilCloudUpload" class="me-2"></svg>Agregar</button>
+            <button *ngIf="accion==1" cButton color="primary" size="sm"><c-spinner aria-hidden="true" size="sm" /></button>
+        </span>
+        <h4>Recibos</h4>
+    </c-card-header>
+    <c-card-body>
+        <table cTable>
+           <thead>
+                <tr>
+                    <th> Nombre</th>
+                    <th>Fecha de modificación</th>
+                    <th>Tipo</th>
+                    <th>Tamaño</th>
+                    <th>Acciones</th>
+                </tr>
+           </thead>
+           <tbody>
+                <tr *ngFor="let recibo of _paginacion?.registros">
+                    <td>{{recibo.nombreDocumento}}</td>
+                    <td>{{recibo.fechaModificacion | date:'dd/MM/yyyy'}}</td>
+                    <td>{{recibo.tipoArchivo}}</td>
+                    <td>{{recibo.tamano | number}} KB</td>
+                    <td>
+                      <button cButton color="info" size="sm" cTooltip="Visualizar" (click)="visualizarRecibo(recibo)">
+                        <svg [cIcon]="iconos.cilMagnifyingGlass" class="me-2"></svg>
+                      </button>
+                      <button cButton color="primary" size="sm" cTooltip="Descargar" (click)="descargarRecibo(recibo)">
+                        <svg [cIcon]="iconos.cilCloudDownload" class="me-2"></svg>
+                      </button>
+                      <button cButton color="danger" size="sm" cTooltip="Eliminar" (click)="borrarRecibo(recibo)">
+                        <svg [cIcon]="iconos.cilTrash" class="me-2"></svg>
+                      </button>
+                    </td>
+                </tr>
+           </tbody>
+        </table>
+    </c-card-body>
+</c-card>
+
+<c-pagination aria-label="Navegacion reportes">
+  <li cPageItem>
+    <a cPageLink
+       aria-label="Anterior"
+       (click)="(_paginacion?.paginaActual??1) === 1 ? null : cambiaPagina(_paginacion?.paginaActual!-1)"
+       [attr.aria-disabled]="(_paginacion?.paginaActual??1) === 1"
+       [class.disabled]="(_paginacion?.paginaActual??1) === 1">
+      <span aria-hidden="true">&laquo;</span>
+    </a>
+  </li>
+  <li cPageItem *ngFor="let page of _paginasArray" [class.disabled]="_paginacion?.paginaActual === page" [class.active]="_paginacion?.paginaActual === page">
+    <a cPageLink (click)="cambiaPagina(page)">{{page}}</a>
+  </li>
+  <li cPageItem>
+    <a cPageLink
+       aria-label="Siguiente"
+       (click)="(_paginacion?.paginaActual??1) === _paginasArray.length ? null : cambiaPagina((_paginacion?.paginaActual??1)+1)"
+       [attr.aria-disabled]="(_paginacion?.paginaActual??1) === _paginasArray.length"
+       [class.disabled]="(_paginacion?.paginaActual??1) === _paginasArray.length">
+      <span aria-hidden="true">&raquo;</span>
+    </a>
+  </li>
+</c-pagination>
+
+<c-modal #modalRecibo (visibleChange)="isModalVisible = $event" [visible]="isModalVisible">
+    <c-modal-header>Subir Recibo</c-modal-header>
+    <c-modal-body>
+      <app-file-upload (fileSelected)="cargarRecibos($event)"></app-file-upload>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="secondary" (click)="isModalVisible = false">Cancelar</button>
+    </c-modal-footer>
+</c-modal>
+
+<c-modal [visible]="isPreviewVisible" (visibleChange)="isPreviewVisible = $event">
+  <c-modal-header>Vista previa del recibo</c-modal-header>
+  <c-modal-body>
+    <ng-container *ngIf="previewUrl">
+      <!-- For PDF -->
+      <iframe *ngIf="previewType === 'pdf'" [src]="previewUrl" width="100%" height="400px"></iframe>
+      <!-- For Images -->
+      <img *ngIf="previewType === 'image'" [src]="previewUrl" style="max-width:100%;max-height:400px;" />
+      <!-- For unsupported types -->
+      <div *ngIf="previewType === 'other'">No se puede visualizar este tipo de archivo.</div>
+    </ng-container>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="isPreviewVisible = false">Cerrar</button>
+  </c-modal-footer>
+</c-modal>

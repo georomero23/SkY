@@ -1,0 +1,115 @@
+<div style="overflow: auto; max-height: 75vh;">
+<table cTable>
+  <thead>
+    <tr>
+      <th *ngFor="let h of headers">{{ h.label }}</th>
+      <th class="acciones-sticky" *ngIf="!esEstatico">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let registro of registros"
+        [class.parpadeo]="modoEdicion && registroEditando && registro[idKey] === registroEditando[idKey]">
+      <td *ngFor="let h of headers" [class.text-center]="h.type === 'checkbox'" class="holaaa">
+        <ng-container *ngIf="modoEdicion && registroEditando && registro[idKey] === registroEditando[idKey]; else valorNormal">
+          <ng-container [ngSwitch]="h.type">
+            <ng-container *ngSwitchCase="'checkbox'">
+              <input type="checkbox" [(ngModel)]="registroActual[h.key]" 
+                [ngClass]="{'is-invalid': !registroActual[h.key] && h.mandatory}"/>
+            </ng-container>
+            <ng-container *ngSwitchCase="'select'">
+              <select [(ngModel)]="registroActual[h.key]" class="form-select"
+                [ngClass]="{'is-invalid': !registroActual[h.key] && h.mandatory}">
+                <option *ngFor="let opt of h.options" [value]="opt.value">{{ opt.label }}</option>
+              </select>
+            </ng-container>
+            <ng-container *ngSwitchCase="'multiselect'">
+              <select [(ngModel)]="registroActual[h.key]" class="form-select" multiple
+                [ngClass]="{'is-invalid': !registroActual[h.key] && h.mandatory}">
+                <option *ngFor="let opt of h.options" [value]="opt.value">{{ opt.label }}</option>
+              </select>
+            </ng-container>
+            <ng-container *ngSwitchCase="'datetime-local'">
+              <input
+                [ngClass]="{'is-invalid': !registroActual[h.key] && h.mandatory}"
+                type="datetime-local"
+                [(ngModel)]="registroActual[h.key]"
+                class="form-control"
+              />
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <input
+                [ngClass]="{'is-invalid': !registroActual[h.key] && h.mandatory }"
+                [type]="h.type || 'text'"
+                [(ngModel)]="registroActual[h.key]"
+              />
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <ng-template #valorNormal>
+          <ng-container [ngSwitch]="h.type">
+            <ng-container *ngSwitchCase="'checkbox'">
+              <input type="checkbox" [checked]="registro[h.key]" disabled />
+            </ng-container>
+            <ng-container *ngSwitchCase="'select'">
+              {{ getOptionLabel(h, registro) }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'multiselect'">
+              {{ getMultiselectLabels(h, registro) }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'datetime-local'">
+              {{ registro[h.key] == null? '-': (registro[h.key] | date:'dd/MM/yyyy HH:mm') }}
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{ registro[h.key] }}
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </td>
+      <td class="acciones-sticky" *ngIf="!esEstatico">
+        <ng-container *ngIf="modoEdicion && registroEditando && registro[idKey] === registroEditando[idKey]; else botonesNormales">
+          <button cButton color="success" size="sm" (click)="guardarRegistro()" [disabled]="!permitirGuardar"><svg [cIcon]="iconos.cilSave"></svg></button>
+          <button cButton color="secondary" size="sm" (click)="cancelarEdicion()"><svg [cIcon]="iconos.cilX"></svg></button>
+        </ng-container>
+        <ng-template #botonesNormales>
+          <button cButton [disabled]="modoEdicion" color="warning" size="sm" (click)="editarRegistro(registro)"><svg [cIcon]="iconos.cilPencil"></svg></button>
+          <button cButton [disabled]="modoEdicion" color="danger" size="sm" (click)="eliminarRegistro(registro)"><svg [cIcon]="iconos.cilTrash"></svg></button>
+        </ng-template>
+      </td>
+    </tr>
+    <tr *ngIf="modoEdicion && !registroEditando">
+      <td *ngFor="let h of headers" [class.text-center]="h.type === 'checkbox'">
+        <ng-container [ngSwitch]="h.type">
+          <ng-container *ngSwitchCase="'checkbox'">
+            <input type="checkbox" [(ngModel)]="registroActual[h.key]" />
+          </ng-container>
+          <ng-container *ngSwitchCase="'select'">
+            <select [(ngModel)]="registroActual[h.key]" class="form-select">
+              <option *ngFor="let opt of h.options" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+          </ng-container>
+          <ng-container *ngSwitchCase="'multiselect'">
+            <select [(ngModel)]="registroActual[h.key]" class="form-select" multiple>
+              <option *ngFor="let opt of h.options" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+          </ng-container>
+          <ng-container *ngSwitchCase="'datetime-local'">
+            <input
+              type="datetime-local" 
+              [(ngModel)]="registroActual[h.key]"
+              class="form-control"
+            />
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            <input [type]="h.type || 'text'" [(ngModel)]="registroActual[h.key]" class="form-control" [ngClass]="{'is-invalid': !registroActual[h.key] && h.mandatory }" />
+          </ng-container>
+        </ng-container>
+      </td>
+      <td class="acciones-sticky">
+        <button cButton color="success" size="sm" (click)="guardarRegistro()">Guardar</button>
+        <button cButton color="secondary" size="sm" (click)="cancelarEdicion()">Cancelar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+<button cButton color="primary" (click)="iniciarNuevo()" *ngIf="!modoEdicion && !esEstatico && permiteNuevos">Nuevo</button>

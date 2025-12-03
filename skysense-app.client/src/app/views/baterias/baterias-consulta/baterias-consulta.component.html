@@ -1,0 +1,34 @@
+<c-card class="mb-4">
+  <c-card-header>
+    <h5>Instalaciones de Batería</h5>
+  </c-card-header>
+  <c-card-body>
+    <div class="text-muted">
+      Actualizado el {{ bateriasTabla.ultimaActualizacion| date:'dd/MM/yyyy HH:mm:ss' }}
+
+    </div>
+    <table cTable class="table table-striped">
+      <thead>
+        <tr>
+          <th>Estatus</th>
+          <th>Nombre</th>
+          <th>Tags Online</th>
+          <th>Alertas</th>
+          <th>Último mensaje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let bateria of bateriasTabla.baterias">
+          <td><div class="status-circle status-{{ bateria.idEstatus }}"></div></td>
+          <td><a href='/#/baterias/monitoreo/{{ bateria.idInstalacion }}'>{{ bateria.nombreInstalacion }}</a></td>
+          <td>{{bateria.tagsOnline}}/{{bateria.tagsTotales}}</td>
+          <td>{{ bateria.alertas }} V</td>
+          <td>{{ bateria.mensajeUltimo }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </c-card-body>
+</c-card>
+
+
+

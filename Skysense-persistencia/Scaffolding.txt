@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold -o:Entidades Name=CadenaConexion Microsoft.EntityFrameworkCore.SqlServer --startup-project:../Skysense-app.server --force

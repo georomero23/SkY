@@ -1,0 +1,31 @@
+.dia-circulo {
+    width: 40px; /* Ajusta el tamaño según necesites */
+    height: 40px;
+    border-radius: 50%; /* Crea el círculo */
+    display: inline-flex; /* Para centrar el número */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+    font-size: 20px; /* Tamaño de la fuente */
+    font-weight: bold;
+    transition: background-color .3s ease-in-out; /* Suaviza el efecto de iluminación */
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  color: #212529;
+}
+
+.dia-circulo:hover {
+        box-shadow: 0 0 0 2px rgba(196, 216, 236, 0.5); /* Sombra que simula iluminación */
+        outline: none; /* Elimina el contorno por defecto */
+        background-color: rgb(187, 202, 240);
+}
+
+.dia-circulo.seleccionado {
+    box-shadow: 0 0 0 2px rgba(209, 221, 235, 0.8); /* Brillo más intenso */
+    color: white;
+    background-color: rgb(35, 98, 255);
+}
+
+.fin-semana {
+  background-color: #f2f2f2 !important;
+}

@@ -1,0 +1,43 @@
+
+<c-row class="mb-3">
+    <c-col [sm]="12">
+        <c-card>
+            <c-card-header>Variables</c-card-header>
+            <c-card-body>
+                <div *ngIf="!tagsNoGraficables.length">No hay tags no graficables</div>
+                <ul class="list-group">
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                        *ngFor="let tag of tagsNoGraficables">
+                        <div>
+                            <div class="fw-bold">{{ tag.nombreAMostrar || ('Tag ' + tag.idTag) }}</div>
+                            <small class="text-muted" *ngIf="tag.descripcion">{{ tag.descripcion }}</small>
+                        </div>
+                        <div>
+                            <span class="badge bg-secondary">
+                                {{ tag.valorActual !== undefined ? tag.valorActual : (tag.valor !== undefined ? tag.valor : '—') }}
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </c-card-body>
+        </c-card>
+    </c-col>
+</c-row>
+<c-row>
+  <c-col *ngFor="let tag of tagsGraficables; let i = index" [sm]="12" [md]="6" [lg]="4" class="mb-3">
+    <c-card>
+      <c-card-header>
+        {{ tag.nombreAMostrar || ('Tag ' + tag.idTag) }}
+      </c-card-header>
+      <c-card-body style="height:240px; padding:0;">
+        <c-chart
+          #chartRef
+          type="line"
+          [data]="{ datasets: [{ label: tag.nombreAMostrar || ('Tag ' + tag.idTag), data: chartData[i] }] }"
+          [options]="chartOptions">
+        </c-chart>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

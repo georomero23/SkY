@@ -1,0 +1,31 @@
+<c-card>
+  <c-card-body>
+    <c-tabs [activeItemKey]="0">
+      <c-tabs-list variant="underline-border">
+        <button cTab [itemKey]="0">
+          <svg [cIcon]="iconos.cilFactory" class="me-2"></svg>
+          Instalación
+        </button>
+        <button cTab [itemKey]="1">
+          <svg [cIcon]="iconos.cilUser" class="me-2"></svg>
+          Cliente
+        </button>
+        <button cTab [itemKey]="2" *ngIf="_infoInsts.tipoProyecto == 2">
+          <svg [cIcon]="iconos.cilInputPower" class="me-2"></svg>
+          Conexiones
+        </button>
+      </c-tabs-list>
+      <c-tab-content>
+        <c-tab-panel [itemKey]="0">
+          <app-info-instalacion-form [infoInsts]="_infoInsts" (guardar)="GuardaInfoInstalacion($event)"></app-info-instalacion-form>
+        </c-tab-panel>
+        <c-tab-panel [itemKey]="1">
+          <app-info-cliente-form [infoCliente]="_infoInsts.idClienteNavigation" (guardar)="GuardaInfoCliente($event)"></app-info-cliente-form>
+        </c-tab-panel>
+        <c-tab-panel [itemKey]="2" *ngIf="_infoInsts.tipoProyecto == 2">
+          <app-info-conexiones-form #infoConexionesForm [idInstalacion]="_idInstalacion"></app-info-conexiones-form>
+        </c-tab-panel>
+      </c-tab-content>
+    </c-tabs>
+  </c-card-body>
+</c-card>

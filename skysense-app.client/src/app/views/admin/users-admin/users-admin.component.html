@@ -1,0 +1,26 @@
+<!-- <app-multi-select
+  [options]="[{ value: '1', label: 'uno' }, { value: '2', label: 'dos' }, { value: '3', label: 'tres' }]"
+  [(selected)]="seleccion"
+  [placeholder]="'Seleccione porfis'">
+</app-multi-select> -->
+
+<c-card>
+  <c-card-header>
+    <h5>Administración de Usuarios</h5>
+  </c-card-header>
+  <c-card-body>
+    <app-registro-editor
+      [headers]="[
+    { key: 'name', label: 'Nombre' },
+    { key: 'mail', label: 'Correo' },
+    { key: 'rol', label: 'Rol', type: 'select', options: this.rolesDataset },
+    { key: 'bloqueado', label: 'Bloqueado', type: 'checkbox' }
+  ]"
+      [registros]="usuarios"
+      idKey="id"
+      [permiteNuevos]="false"
+      (guardar)="guardarUsuario($event)"
+      (eliminar)="eliminarUsuario($event)">
+    </app-registro-editor>
+  </c-card-body>
+</c-card>

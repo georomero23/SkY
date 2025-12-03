@@ -1,0 +1,111 @@
+<c-card>
+    <c-card-header>
+        <span class="float-end">
+            <select cFormControl [(ngModel)]="_anioSeleccionado" (change)="obtenRecibos()">
+              <option *ngFor="let anio of listaAnios" [value]="anio">{{anio}}</option>
+            </select>
+            <button *ngIf="accion==1" cButton color="primary" size="sm"><c-spinner aria-hidden="true" size="sm" /></button>
+        </span>
+        <h4>Recibos</h4>
+    </c-card-header>
+    <c-card-body>
+        <table cTable>
+           <thead>
+                <tr>
+                    <th>Mes</th>
+                    <th>Fecha de modificación</th>
+                    <th>kW Base</th>
+                    <th>kW Intermedia</th>
+                    <th>kW Punta</th>
+                    <th>kWh Base</th>
+                    <th>kWh Intermedia</th>
+                    <th>kWh Punta</th>
+                    <th>React. KvArh</th>
+                    <th>Pago</th>
+                    <th>Acciones</th>
+                </tr>
+           </thead>
+           <tbody>
+                <tr *ngFor="let recibo of _recibosAnuales" [class.renglonInactivo]="!recibo.idDocumento">
+                    <td>{{recibo.idDocumentoNavigation?.nombreDocumento}}</td>
+                    <td>{{recibo.idDocumento? (recibo.idDocumentoNavigation?.fechaModificacion | date:'dd/MM/yyyy'): ""}}</td>
+                    <ng-container *ngIf="!_reciboModificado || _reciboModificado.idDocumento != recibo.idDocumento">
+                      <td>{{recibo.kWbase??"-"}}</td>
+                      <td>{{recibo.kWintermedia??"-"}}</td>
+                      <td>{{recibo.kWpunta??"-"}}</td>
+                      <td>{{recibo.kWhBase??"-"}}</td>
+                      <td>{{recibo.kWhIntermedia??"-"}}</td>
+                      <td>{{recibo.kWhPunta??"-"}}</td>
+                      <td>{{recibo.reactivosKvArh??"-"}}</td>
+                      <td>{{recibo.pago??"-"}}</td>
+                    </ng-container>
+                    <ng-container *ngIf="_reciboModificado && _reciboModificado.idDocumento == recibo.idDocumento">
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.kWbase" /></td>
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.kWintermedia" /></td>
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.kWpunta" /></td>
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.kWhBase" /></td>
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.kWhIntermedia" /></td>
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.kWhPunta" /></td>
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.reactivosKvArh" /></td>
+                      <td><input type="number" [(ngModel)]="_reciboModificado!.pago" /></td>
+                    </ng-container>
+                    <td *ngIf="recibo.idDocumento">
+                      <ng-container *ngIf="_reciboModificado && _reciboModificado.idDocumento == recibo.idDocumento">
+                        <button cButton color="success" size="sm" (click)="mConfirmaEdicion(recibo.idRecibo)"><svg [cIcon]="iconos.cilCheck"></svg></button>
+                        <button cButton color="danger" size="sm" (click)="_reciboModificado = null"><svg [cIcon]="iconos.cilX"></svg></button>
+                      </ng-container>
+                      <ng-container *ngIf="!_reciboModificado && recibo.idDocumento">
+                        <button cButton color="warning" size="sm" (click)="editarRecibo(recibo)">Editar</button>
+                        <button cButton color="info" size="sm" cTooltip="Visualizar" (click)="visualizarRecibo(recibo.idDocumentoNavigation!)">
+                          <svg [cIcon]="iconos.cilMagnifyingGlass" class="me-2"></svg>
+                        </button>
+                        <button cButton color="primary" size="sm" cTooltip="Descargar" (click)="descargarRecibo(recibo.idDocumentoNavigation!)">
+                          <svg [cIcon]="iconos.cilCloudDownload" class="me-2"></svg>
+                        </button>
+                        <button cButton color="danger" size="sm" cTooltip="Eliminar" (click)="borrarRecibo(recibo.idDocumentoNavigation!)">
+                          <svg [cIcon]="iconos.cilTrash" class="me-2"></svg>
+                        </button>
+                      </ng-container>
+                      <ng-container *ngIf="!recibo.idDocumento && !_reciboModificado">
+                        <button cButton color="primary" size="sm" cTooltip="Subir" (click)="_subiendoMes = recibo.mesRecibo;isModalVisible = true;">
+                          <svg [cIcon]="iconos.cilCloudUpload" class="me-2"></svg>
+                        </button>
+                      </ng-container>
+                    </td>
+                    <td *ngIf="!recibo.idDocumento">
+                      <button cButton color="primary" size="sm" cTooltip="Subir" (click)="_subiendoMes = recibo.mesRecibo;isModalVisible = true;">
+                        <svg [cIcon]="iconos.cilCloudUpload" class="me-2"></svg>
+                      </button>
+                    </td>
+                </tr>
+           </tbody>
+        </table>
+    </c-card-body>
+</c-card>
+
+<c-modal #modalRecibo (visibleChange)="isModalVisible = $event" [visible]="isModalVisible" >
+    <c-modal-header>Subir Recibo</c-modal-header>
+    <c-modal-body>
+      <app-file-upload (fileSelected)="cargarRecibos($event)"></app-file-upload>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="secondary" (click)="isModalVisible = false">Cancelar</button>
+    </c-modal-footer>
+</c-modal>
+
+<c-modal [visible]="isPreviewVisible" (visibleChange)="isPreviewVisible = $event"  size="xl">
+  <c-modal-header>Vista previa del recibo</c-modal-header>
+  <c-modal-body>
+    <ng-container *ngIf="previewUrl">
+      <!-- For PDF -->
+      <iframe *ngIf="previewType === 'pdf'" [src]="previewUrl" width="100%" height="400px"></iframe>
+      <!-- For Images -->
+      <img *ngIf="previewType === 'image'" [src]="previewUrl" style="max-width:100%;max-height:400px;" />
+      <!-- For unsupported types -->
+      <div *ngIf="previewType === 'other'">No se puede visualizar este tipo de archivo.</div>
+    </ng-container>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="isPreviewVisible = false">Cerrar</button>
+  </c-modal-footer>
+</c-modal>

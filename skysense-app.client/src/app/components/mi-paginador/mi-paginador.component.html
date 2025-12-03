@@ -1,0 +1,15 @@
+
+      <c-pagination aria-label="Paginador de resultados de instalaciones" style="cursor: pointer;">
+        <li cPageItem [disabled]="_paginado.paginaActual <= 1"
+          (click)="_paginado.paginaActual <= 1 ? null : paginacionCambiada(_paginado.paginaActual - 1)">
+          <span cPageLink>Anterior</span>
+        </li>
+        <li cPageItem *ngFor="let pag of getPaginasParaMostrar()" [active]="pag === _paginado.paginaActual"
+          [class.disabled]="pag === '...'" (click)="pag !== '...' && paginacionCambiada(+pag)">
+          <a cPageLink>{{ pag }}</a>
+        </li>
+        <li cPageItem [disabled]="_paginado.paginaActual >= _paginado.numeroPaginas"
+          (click)="_paginado.paginaActual >= _paginado.numeroPaginas ? null : paginacionCambiada(_paginado.paginaActual + 1)">
+          <a cPageLink>Siguiente</a>
+        </li>
+      </c-pagination>

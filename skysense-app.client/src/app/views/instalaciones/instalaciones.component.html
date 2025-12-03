@@ -1,0 +1,99 @@
+<c-card class="mb-4">
+    <c-card-header>
+        <div class="headerBusqueda">
+          <div>
+            <h3>
+            Instalaciones</h3>
+          </div>
+          <div>
+              <form (submit)="BuscarInstalacion(); $event.preventDefault()" style="display: contents;">
+            <c-input-group>
+                <input aria-label="Busqueda de instalaciones"
+                       cFormControl
+                       placeholder="Codigo Proyecto | RPU" [(ngModel)]="_palabraBuscador" name="_palabraBuscador"
+                />
+              <button cButton color="secondary" type="button" variant="outline" (click)="_palabraBuscador = '';BuscarInstalacion()">
+                X
+              </button>
+              <button cButton color="primary" type="button" variant="outline" (click)="BuscarInstalacion()">
+                Buscar
+              </button>
+            </c-input-group>
+              </form>
+          </div>
+        </div>
+    </c-card-header>
+    <c-card-body>
+      <table cTable>
+        <thead>
+        <tr>
+          <th scope="col">
+            <!-- Filtro de grupos en el encabezado -->
+            <select cFormControl [(ngModel)]="grupoSeleccionado" (change)="filtrarPorGrupo()">
+              <option value="-1">TODOS</option>
+              <option *ngFor="let grupo of grupos" [value]="grupo.idGrupo">{{grupo.nombre}}</option>
+            </select>
+          </th>
+          <th scope="col" (click)="mOrdenaPorNombre()">Nombre
+            <svg *ngIf="_ordenandoPorNombreAscendente != undefined" cIcon class="me-2" [name]="_ordenandoPorNombreAscendente? 'cilSortAlphaDown' : 'cilSortAlphaUp'"></svg>
+          </th>
+          <th scope="col">Codigo Proyecto</th>
+          <th scope="col">Tarifa</th>
+          <th scope="col">RPU</th>
+          <!-- <th scope="col">Estatus</th>
+          <th scope="col">Potencia de la planta [kWh]</th> -->
+          <th scope="col">Vigencia Póliza</th>
+          <th scope="col">Editar</th>
+        </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="!_cargando; else loading">
+            <tr *ngFor="let instalacion of _paginadoInstalaciones.registros">
+              <ng-container *ngIf="_editandoRenglon == instalacion.idInstalacion">
+                  <td>
+                    <select cFormControl [(ngModel)]="_instalacionEditando.idGrupo">
+                      <option value="0">Independientes</option>
+                      <option *ngFor="let grupo of grupos" [value]="grupo.idGrupo">{{grupo.nombre}}</option>
+                    </select>
+                  </td>
+              </ng-container>
+              <ng-container *ngIf="_editandoRenglon != instalacion.idInstalacion">
+                  <td>{{instalacion.grupoNombre}}</td>
+              </ng-container>
+                  <!-- <td><a [href]="'#/clientes/'+instalacion.idCliente + '/' + instalacion.idInstalacion">{{instalacion.nombre}}</a></td>
+                  <td><input cFormControl id="inputNombre" type="text" [(ngModel)]="_instalacionEditando.codigoProyecto"/></td>
+                  <td><input cFormControl id="inputNombre" type="text" [(ngModel)]="_instalacionEditando.sTarifa"/></td>
+                  <td><input cFormControl id="inputNombre" type="text" [(ngModel)]="_instalacionEditando.ubicacion"/></td> -->
+                  <td><a [href]="'#/clientes/'+instalacion.idCliente + '/' + instalacion.idInstalacion">{{instalacion.nombre || "SIN NOMBRE"}}</a></td>
+                  <td>{{instalacion.codigoProyecto}}</td>
+                  <td>{{instalacion.sTarifa}}</td>
+                  <td>{{instalacion.rpu}}</td>
+                  <!-- <td>{{instalacion.sEstatus}}</td>
+                  <td>0</td> -->
+                  <td>{{(instalacion.garantiaInicio|date: "dd/MM/yyyy") + " - " + (instalacion.garantiaFin|date: "dd/MM/yyyy")}}</td>
+              <td *ngIf="_editandoRenglon != instalacion.idInstalacion">
+                <button [color]="'light'" cButton (click)="mEdita(instalacion)"><svg cIcon class="me-2" name="cilPencil"></svg></button>
+                <!-- <button [color]="'light'" cButton (click)="mElimina(instalacion.idInstalacion)"><svg cIcon class="me-2" name="cilTrash"></svg></button></td> -->
+              <td *ngIf="_editandoRenglon == instalacion.idInstalacion">
+                <ng-container *ngIf="!_haciendoPeticion">
+                  <button [color]="'success'" cButton (click)="mConfirmaEdicion(instalacion.idInstalacion)"><svg cIcon class="me-2" name="cilCheck"></svg></button>
+                  <button [color]="'danger'" cButton (click)="_editandoRenglon = -1"><svg cIcon class="me-2" name="cilX"></svg></button>
+                </ng-container>
+                <ng-container *ngIf="_haciendoPeticion">
+                  <button [color]="'success'" cButton disabled><c-spinner aria-hidden="true" size="sm" /></button>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-template #loading>
+            <tr *ngFor="let _ of [1,2,3,4,5]">
+              <td cPlaceholderAnimation="glow" *ngFor="let __ of [1,2,3,4,5,6,7]">
+                <span cCol="12" cPlaceholder></span>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+      <app-mi-paginador [paginado]="_paginadoInstalaciones" (onPaginaCambiada)="paginacionCambiada($event)"></app-mi-paginador>
+   </c-card-body>
+</c-card>

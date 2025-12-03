@@ -1,0 +1,20 @@
+.acciones-sticky {
+  position: sticky;
+  right: 0;
+  background: white;
+  z-index: 2;
+  text-align: right;
+}
+
+.is-invalid {
+  border-color: red;
+}
+
+@keyframes parpadeo-tenue {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: #ffeeba; }
+}
+
+tr.parpadeo td {
+  animation: parpadeo-tenue 1s infinite;
+}

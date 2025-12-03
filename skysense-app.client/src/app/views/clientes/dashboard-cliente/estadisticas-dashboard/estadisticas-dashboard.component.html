@@ -1,0 +1,272 @@
+<c-row>
+    <!-- <c-col>
+        <c-card>
+            <c-card-body>
+                <h6 cCardTitle>Consumo CFE Acumulado [kWh]</h6>
+                <h3 cCardText [cTextColor]="'primary'">
+                    1,650 kWh
+                </h3>
+                <p class="footerText">
+                    Información del 1 de enero de 2022 al día de hoy
+                </p>
+            </c-card-body>
+        </c-card></c-col>
+    <c-col>
+        <c-card>
+            <c-card-body>
+                <h6 cCardTitle>Generación de paneles acumulado [kWh]</h6>
+                <h3 cCardText [cTextColor]="'primary'">
+                    1,500 kWh
+                </h3>
+                <p cCardText class="text-small text-bold">
+                    Garantía anual de 4380 kWh
+                </p>
+                <p class="footerText">
+                    Información del 1 de enero de 2022 al día de hoy
+                </p>
+            </c-card-body>
+        </c-card></c-col>
+    <c-col>
+        <c-card>
+            <c-card-body>
+                <h6 cCardTitle>Ahorro acumulado [$]</h6>
+                <h3 cCardText [cTextColor]="'primary'">
+                    $16,664
+                </h3>
+                <p class="footerText">
+                    Información del 1 de enero de 2022 al día de hoy
+                </p>
+            </c-card-body>
+        </c-card></c-col>
+    <c-col>
+        <c-card>
+            <c-card-body>
+                <h6 cCardTitle>Generación de paneles acumulado [kWh]</h6>
+                <div class="progreso">
+                    <div class="barOverflow">
+                        <div class="bar" style="transform: rotate(171deg);"></div>
+                    </div>
+                    540kWh
+                </div>
+            </c-card-body>
+        </c-card></c-col> -->
+</c-row>
+<c-row *ngIf="_idPlataforma == 3 || _idPlataforma == 5 || _idPlataforma == 6">
+    <c-card class="mb-3">
+        <c-tabs [activeItemKey]="0">
+            <c-tabs-list variant="underline-border">
+                <button cTab [itemKey]="0">
+                    <svg [cIcon]="iconos.cilBattery3" class="me-2"></svg>
+                    Generación
+                </button>
+                <button cTab [itemKey]="1">
+                    <svg [cIcon]="iconos.cilChart" class="me-2"></svg>
+                    Comparación
+                </button>
+                <button cTab [itemKey]="3">
+                    <svg [cIcon]="iconos.cilDollar" class="me-2"></svg>
+                    Ahorro
+                </button>
+            </c-tabs-list>
+            <c-tabs-content>
+                <c-tab-panel class="p-3" [itemKey]="0">
+                    <div>
+                        <c-row>
+                            <label cLabel="col" cCol [sm]="2" for="anio">
+                                Año
+                            </label>
+                            <c-col [sm]="4">
+                                <select aria-label="Selección de año" cSelect id="anio" type="number"
+                                    (change)="AnioCambiado()" [(ngModel)]="_anioSeleccionado">
+                                    <option *ngFor="let a of _anios" [ngValue]="a">{{a.label}}</option>
+                                </select>
+                            </c-col>
+                            <c-col [sm]="2">
+                                <button cButton color="warning" (click)="comenzarEdicionGarantizados()" *ngIf="!editandoGarantizados">
+                                    Editar Garantizados
+                                </button>
+                            </c-col>
+                            <c-col [sm]="2">
+                                <button cButton color="warning" (click)="editandoGarantizados = false" *ngIf="editandoGarantizados">
+                                    Cancelar edición
+                                </button>
+                            </c-col>
+                            <c-col [sm]="2">
+                                <button cButton color="primary" *ngIf="editandoGarantizados" (click)="guardarGarantizados()">
+                                    Guardar Garantizados
+                                </button>
+                            </c-col>
+                        </c-row>
+                        <ng-container *ngIf="_cargandoDatos == 0">
+                            <div style="overflow-x: auto; width: 100%;">
+
+                                <table cTable class="retiraFondo">
+                                    <colgroup>
+                                        <col>
+                                        <col *ngFor="let m of _meses;index as i" [ngClass]="{
+                                            'inactiveCol': _inicioOperacionesAnio > _anioSeleccionado.value || (_inicioOperacionesAnio === _anioSeleccionado.value && _inicioOperacionesMes > i+1)
+                                        || (_fechaHoyAnio === _anioSeleccionado.value && _fechaHoyMes < i+1),
+                                            'daemonNo': !_tablaGeneracion!.arrValoresGarantizados[i].daemonYaEjecutado}">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Criterio</th>
+                                            <th *ngFor="let m of _meses" scope="col">{{m}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">Generado</th>
+                                            <td *ngFor="let m of _tablaGeneracion!.arrValoresReales;index as mes">
+                                                {{m?(m|number:'1.2-2'):""}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Garantizado</th>
+                                            <td *ngFor="let mes of _meses; index as i">
+                                              <ng-container *ngIf="editandoGarantizados; else valorGarantizado">
+                                                <input type="number" class="form-control input-edicion-ancha"
+                                                  [(ngModel)]="garantizadoModel[i].generacionGarantizada" />
+                                              </ng-container>
+                                              <ng-template #valorGarantizado>
+                                                {{ _tablaGeneracion?.arrValoresGarantizados?.[i] ? (_tablaGeneracion?.arrValoresGarantizados?.[i]?.generacionGarantizada| number:'1.2-2') : "" }}
+                                              </ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Diferencia</th>
+                                            <td *ngFor="let m of _tablaGeneracion!.arrValoresReales;index as i ">
+                                                {{(m??0) - (_tablaGeneracion!.arrValoresGarantizados[i]!.generacionGarantizada??0) |
+                                                number:'1.2-2' }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <c-chart #Chart1 [data]="data1" [options]="{plugins: {datalabels: {display: false}}}" type="bar" />
+                        </ng-container>
+                        <div *ngIf="_cargandoDatos != 0">
+                            <c-spinner color="primary" variant="grow" />
+                        </div>
+                    </div>
+                </c-tab-panel>
+                <c-tab-panel class="p-3" [itemKey]="1">
+                    <div>
+                        <c-row>
+                            <label cLabel="col" cCol [sm]="1" for="anio">
+                                Año
+                            </label>
+                            <c-col [sm]="4">
+                                <select aria-label="Selección de año" cSelect id="anio2" type="number"
+                                    (change)="GeneracionDiariaCambiada()" [(ngModel)]="_anioSeleccionado2">
+                                    <option *ngFor="let a of _anios" [ngValue]="a">{{a.label}}</option>
+                                </select>
+                            </c-col>
+                            <label cLabel="col" cCol [sm]="1" for="mes">
+                                Mes
+                            </label>
+                            <c-col [sm]="4">
+                                <select aria-label="Selección de mes" cSelect id="mes"
+                                    (change)="GeneracionDiariaCambiada()" [(ngModel)]="_mesSeleccionado">
+                                    <option *ngFor="let a of _meses;index as i" value="{{i+1}}">{{a}}</option>
+                                </select>
+                            </c-col>
+                            <c-col [sm]="2">
+                                <button cButton type="submit" *ngIf="_cargandoDatos == 0"
+                                    [cModalToggle]="'modalEdicion'">Editar datos</button>
+                            </c-col>
+                        </c-row>
+                        <ng-container *ngIf="_cargandoDatos == 0">
+                            <table cTable *ngIf="_cargandoDatos == 0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">DIA</th>
+                                        <th *ngFor="let inv of _tablaGeneracionDiaria?.inversoresEncabezados;index as i"
+                                            scope="col">{{inv}}</th>
+                                        <th scope="col">GENERACIÓN TOTAL DIARIA (kWh)</th>
+                                        <th scope="col">DESVIACIÓN MÁXIMA ENTRE INVERSORES (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let d of _tablaGeneracionDiaria?.datos;index as i">
+                                        <td scope="row">{{d.iDia}}</td>
+                                        <td *ngFor="let inv of d.datosInversores;index as j"
+                                            [ngClass]="{'datoEditado': d.arregloEditados[j]}">{{inv}}</td>
+                                        <td scope="row">{{d.generacionTotal}}</td>
+                                        <td scope="row">{{d.desviacionMaxima | number:'1.2-2'}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <c-chart #Chart2 [data]="data2" [options]="{plugins: {datalabels: {display: false}}}" type="bar" />
+                        </ng-container>
+                        <div *ngIf="_cargandoDatos != 0">
+                            <c-spinner color="primary" variant="grow" />
+                        </div>
+                    </div>
+                </c-tab-panel>
+            </c-tabs-content>
+        </c-tabs>
+
+    </c-card>
+</c-row>
+<c-row *ngIf="!(_idPlataforma == 3 || _idPlataforma == 5 || _idPlataforma == 6)">
+    <h3>Actualmente no disponible para esta plataforma.</h3>
+</c-row>
+
+<c-modal backdrop="static" id="modalEdicion" #modalEdicion size="xl">
+    <c-modal-header>
+        <h5 cModalTitle>Edición de datos de {{_meses[_mesSeleccionado-1]}} del {{_anioSeleccionado2?.value ?? ''}}</h5>
+        <button [cModalToggle]="'modalEdicion'" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <table cTable *ngIf="_cargandoDatos == 0">
+            <thead>
+                <tr>
+                    <th scope="col">DIA</th>
+                    <th *ngFor="let inv of _tablaGeneracionDiaria?.inversoresEncabezados;index as i" scope="col">{{inv}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let d of _tablaGeneracionDiaria?.datos;index as i">
+                    <td scope="row">{{d.iDia}}</td>
+                    <td *ngFor="let inv of d.datosInversores;index as j"
+                        [ngClass]="{'datoEditado': d.arregloEditados[j]}">
+                        <div class="mb-3" *ngIf="!_editandoDatos[i] || !_editandoDatos[i][j]">
+                            <c-input-group>
+                                <input aria-describedby="button-addon2" aria-label="Editar dato" cFormControl
+                                    [value]="inv" disabled />
+                                <button cButton color="success" id="button-addon2" type="button" variant="outline"
+                                    (click)="EditandoValor(i,j,inv)">
+                                    <svg cIcon class="me-2" name="cilPencil"></svg>
+                                </button>
+
+                            </c-input-group>
+                        </div>
+                        <div class="mb-3" *ngIf="!!_editandoDatos[i] && !!_editandoDatos[i][j]">
+                            <c-input-group>
+                                <input aria-describedby="button-addon2" aria-label="Editar dato" cFormControl
+                                    cFormControl [(ngModel)]="_editandoDatos[i][j]" />
+                                <button cButton color="danger" id="button-addon2" type="button" variant="outline"
+                                    (click)="_editandoDatos[i] = []">
+                                    <svg cIcon class="me-2" name="cilX"></svg>
+                                </button>
+
+                            </c-input-group>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="secondary" [cModalToggle]="'modalEdicion'" #buttonClose id="buttonClose">Cerrar</button>
+        <button cButton color="primary" (click)="GuardarEdicionDatos()" *ngIf="!_guardandoDatos">Guardar
+            Cambios</button>
+        <button cButton color="primary" class="m-1" disabled *ngIf="_guardandoDatos">
+            <c-spinner aria-hidden="true" size="sm" />
+            Guardando datos...
+        </button>
+    </c-modal-footer>
+</c-modal>
+

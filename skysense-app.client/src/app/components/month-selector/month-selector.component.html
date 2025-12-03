@@ -1,0 +1,14 @@
+<div class="d-flex align-items-center gap-2 mb-3">
+  <button cButton color="secondary" (click)="retroceder()">
+    <svg [cIcon]="iconos.cilChevronLeft"></svg>
+  </button>
+  <select class="form-select" [(ngModel)]="month" (ngModelChange)="onMonthChange($event)">
+    <option *ngFor="let m of meses; let i = index" [value]="i + 1">{{ m }}</option>
+  </select>
+  <select class="form-select" [(ngModel)]="year" (ngModelChange)="onYearChange($event)">
+    <option *ngFor="let y of anios" [value]="y">{{ y }}</option>
+  </select>
+  <button cButton color="secondary" (click)="avanzar()">
+    <svg [cIcon]="iconos.cilChevronRight"></svg>
+  </button>
+</div>

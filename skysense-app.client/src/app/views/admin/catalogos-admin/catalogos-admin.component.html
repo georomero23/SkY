@@ -1,0 +1,54 @@
+<c-card>
+    <c-card-header>
+        <h5>Administración de Catálogos</h5>
+    </c-card-header>
+    <c-card-body>
+        <c-tabs [activeItemKey]="_tabSelected">
+            <c-tabs-list variant="underline-border">
+                <button cTab [itemKey]="'Cat'" (click)="_tabSelected = 'Cat'"><svg [cIcon]="iconos.cilList"
+                        class="me-2"></svg>Catálogos</button>
+                <button cTab [itemKey]="'Gru'" (click)="_tabSelected = 'Gru'"><svg [cIcon]="iconos.cilCouch"
+                        class="me-2"></svg>Grupos</button>
+            </c-tabs-list>
+            <c-tabs-content>
+                <c-tab-panel [itemKey]="'Cat'">
+                    <div class="mb-3">
+                        <label>Selecciona catálogo:</label>
+                        <select cFormControl [(ngModel)]="catalogoSeleccionado" class="form-select"
+                            (change)="getRegistros(catalogoSeleccionado)">
+                            <option value="-1">-- Selecciona --</option>
+                            <option *ngFor="let cat of catalogos" [value]="cat.idCatalogo">{{cat.nombre}}</option>
+                        </select>
+                    </div>
+                    <div *ngIf="catalogoSeleccionado>0">
+                        <app-registro-editor [headers]="[
+                                                        { key: 'nombreOpcion', label: 'Opción' },
+                                                        { key: 'infoAdicional', label: 'Descripción' },
+                                                        { key: 'disponible', label: 'Disponible', type: 'checkbox' }
+                                                        ]" [registros]="registros" idKey="idOpcion" (guardar)="guardarCatalogo($event)"
+                            (eliminar)="eliminarCatalogo($event)">
+                        </app-registro-editor>
+                    </div>
+                </c-tab-panel>
+                <c-tab-panel [itemKey]="'Gru'">
+                    <div>
+                        <app-registro-editor [headers]="[
+                                                        { key: 'nombre', label: 'Grupo' },
+                                                        { key: 'disponible', label: 'Disponible', type: 'checkbox' }
+                                                        ]" [registros]="grupos" idKey="idGrupo" (guardar)="guardarGrupo($event)"
+                            (eliminar)="confirmEliminarGrupo($event)">
+                        </app-registro-editor>
+                    </div>
+                </c-tab-panel>
+            </c-tabs-content>
+
+        </c-tabs>
+    </c-card-body>
+</c-card>
+<app-confirm-dialog
+  [visible]="showConfirm"
+  [title]="'Eliminar registro'"
+  [message]="'¿Deseas eliminar este registro? Las instalaciones asociadas a este grupo se pondrán como independientes.'"
+  (confirmed)="eliminarGrupoYES()"
+  (cancelled)="eliminarGrupoNO()">
+</app-confirm-dialog>

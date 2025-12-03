@@ -1,0 +1,10 @@
+<div
+  class="file-drop-zone"
+  [class.dragging]="isDragging"
+  (drop)="onDrop($event)"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+>
+  <p>Arrastra un archivo aquí o haz clic para seleccionar</p>
+  <input type="file" (change)="onFileChange($event)" />
+</div>

@@ -1,0 +1,35 @@
+<c-card class="mb-4">
+    <c-card-header>
+        Perfil
+    </c-card-header>
+    <c-card-body>
+        <form cForm class="row g-3" onsubmit="">
+            <c-col md="6">
+              <label cLabel for="inputEmail">Correo electrónico</label>
+              <input plainText cFormControl id="inputEmail" type="email" [value]="_correo" />
+            </c-col>
+            <c-col md="6">
+              <label cLabel for="inputRol">Rol</label>
+              <select cSelect id="inputRol" [value]="_rol">
+                <option value="0">Elige...</option>
+                <option value="1">Dueño del sistema</option>
+                <option value="2">Vendedor Sr.</option>
+                <option value="3">Vendedor Jr.</option>
+                <option value="4">Analista</option>
+                <option value="5">Cliente</option>
+              </select>
+            </c-col>
+            <c-col md="6">
+              <label cLabel for="inputNombre">Nombre</label>
+              <input cFormControl id="inputNombre" type="text" [value]="_nombre"/>
+            </c-col>
+            <c-col md="6">
+              <label cLabel for="inputApellido">Apellidos</label>
+              <input cFormControl id="inputApellido" type="text" [value]="_apellidos"/>
+            </c-col>
+            <c-col xs="12">
+              <button cButton type="submit">Guardar</button>
+            </c-col>
+          </form>
+    </c-card-body>
+</c-card>

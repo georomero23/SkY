@@ -1,0 +1,175 @@
+<c-card>
+  <c-card-header>
+    <span class="float-end">
+      <select cFormControl [(ngModel)]="_anioSeleccionado" (change)="obtenReportes()">
+        <option *ngFor="let anio of listaAnios" [value]="anio">{{anio}}</option>
+      </select>
+      <div class="d-inline-block mx-3 icono-resaltado" cTooltip="Configuración de reportes automáticos" style="cursor: pointer;" (click)="muestraConfig = true">
+        <svg [cIcon]="iconos.cilCog"></svg>
+      </div>
+      <button *ngIf="accion==1" cButton color="primary" size="sm"><c-spinner aria-hidden="true" size="sm" /></button>
+    </span>
+    <h4>Reportes</h4>
+  </c-card-header>
+  <c-card-body>
+    <table cTable>
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Fecha de modificación</th>
+          <th>Paneles Generación (kWh)</th>
+          <th>Ahorro Acumulado $</th>
+          <th>Ahorro ambiental tCO2</th>
+          <th>Consumo CFE (kWh)</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let reporte of _reportesAnuales" [class.renglonInactivo]="!reporte.idDocumento">
+          <td>{{reporte.idDocumentoNavigation?.nombreDocumento}}</td>
+          <td>{{reporte.idDocumento? (reporte.idDocumentoNavigation?.fechaModificacion | date:'dd/MM/yyyy'): ""}}</td>
+          <!-- <td>{{reporte.idDocumento? ((reporte.idDocumentoNavigation?.tamano | number)+ " KB"): ""}}</td> -->
+          <ng-container *ngIf="!_reporteModificado || _reporteModificado.idDocumento != reporte.idDocumento">
+            <td>{{reporte.panelesGeneracion??"-"}}</td>
+            <td>{{reporte.ahorroAcumulado??"-"}}</td>
+            <td>{{reporte.ahorroAmbiental??"-"}}</td>
+            <td>{{reporte.consumoCFE??"-"}}</td>
+          </ng-container>
+          <ng-container *ngIf="_reporteModificado && _reporteModificado.idDocumento == reporte.idDocumento">
+            <td><input type="number" [(ngModel)]="_reporteModificado!.panelesGeneracion" /></td>
+            <td><input type="number" [(ngModel)]="_reporteModificado!.ahorroAcumulado" /></td>
+            <td><input type="number" [(ngModel)]="_reporteModificado!.ahorroAmbiental" /></td>
+            <td><input type="number" [(ngModel)]="_reporteModificado!.consumoCFE" /></td>
+          </ng-container>
+          <td>
+            <ng-container *ngIf="_reporteModificado && _reporteModificado.idDocumento == reporte.idDocumento">
+              <button cButton color="success" size="sm" (click)="mConfirmaEdicion(reporte.idReporte)"><svg
+                  [cIcon]="iconos.cilCheck"></svg></button>
+              <button cButton color="danger" size="sm" (click)="_reporteModificado = null"><svg
+                  [cIcon]="iconos.cilX"></svg></button>
+            </ng-container>
+            <ng-container *ngIf="!_reporteModificado && reporte.idDocumento">
+              <button cButton color="warning" size="sm" (click)="editarReporte(reporte)">Editar</button>
+              <button cButton color="info" size="sm" cTooltip="Visualizar"
+                (click)="visualizarReporte(reporte.idDocumentoNavigation!)">
+                <svg [cIcon]="iconos.cilMagnifyingGlass"></svg>
+              </button>
+              <button cButton color="primary" size="sm" cTooltip="Descargar"
+                (click)="descargarReporte(reporte.idDocumentoNavigation!)">
+                <svg [cIcon]="iconos.cilCloudDownload"></svg>
+              </button>
+              <button cButton color="danger" size="sm" cTooltip="Eliminar"
+                (click)="borrarReporte(reporte.idDocumentoNavigation!)">
+                <svg [cIcon]="iconos.cilTrash"></svg>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="!reporte.idDocumento && !_reporteModificado">
+              <button cButton color="primary" size="sm" cTooltip="Subir reporte manualmente"
+                (click)="_subiendoMes = reporte.mesReporte;isModalVisible = true;">
+                <svg [cIcon]="iconos.cilCloudUpload"></svg>
+              </button>
+              <button cButton color="primary" size="sm" cTooltip="Generar reporte automático"
+                (click)="generarReporteAutomatico(reporte.mesReporte)">
+                <svg [cIcon]="iconos.cilBoltCircle"></svg>
+              </button>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </c-card-body>
+</c-card>
+
+<c-modal #modalReporte (visibleChange)="isModalVisible = $event" [visible]="isModalVisible">
+  <c-modal-header>Subir Reporte</c-modal-header>
+  <c-modal-body>
+    <app-file-upload (fileSelected)="cargarReportes($event)"></app-file-upload>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="isModalVisible = false">Cancelar</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal [visible]="isPreviewVisible" (visibleChange)="isPreviewVisible = $event" size="xl">
+  <c-modal-header>Vista previa del reporte</c-modal-header>
+  <c-modal-body>
+    <ng-container *ngIf="previewUrl">
+      <!-- For PDF -->
+      <iframe *ngIf="previewType === 'pdf'" [src]="previewUrl" width="100%" height="400px"></iframe>
+      <!-- For Images -->
+      <img *ngIf="previewType === 'image'" [src]="previewUrl" style="max-width:100%;max-height:400px;" />
+      <!-- For unsupported types -->
+      <div *ngIf="previewType === 'other'">No se puede visualizar este tipo de archivo.</div>
+    </ng-container>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="isPreviewVisible = false">Cerrar</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal [visible]="muestraConfig" (visibleChange)="muestraConfig = $event" size="lg">
+  <c-modal-header>Configuración de Reportes Automáticos</c-modal-header>
+  <c-modal-body>
+    <form cForm>
+      <div>
+        <label cLabel for="nombreEnRecibo">
+          Nombre en recibo:
+        </label>
+        <div>
+          <input cFormControl name="nombreEnRecibo" [(ngModel)]="configRA.nombreEnRecibo" class="form-control" required />
+        </div>
+      </div>
+      <div>
+        <label cLabel for="cargoDAP">
+          Cargo por Derecho de Alumbrado Público (DAP) (%):
+        </label>
+        <div>
+          <c-input-group class="mb-3">
+            <input aria-label="0.00" cFormControl  id="cargoDAP" type="number" [(ngModel)]="configRA.porcentajeDapNumeros" name="cargoDAP" />
+            <span cInputGroupText>%</span>
+          </c-input-group>
+        </div>
+      </div>
+      <div>
+        <label cLabel for="selectUmbral">
+          Umbral del Factor de Potencia:
+        </label>
+        <div>
+          <select cSelect id="selectUmbral" name="selectUmbral" [(ngModel)]="configRA.umbralFp">
+            <option value="0.9">90%</option>
+            <option value="0.95">95%</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label cLabel for="fpDefault" cTooltip="Este valor se usará cuando el consumo de la red sea 0 kWh.">
+          Factor de Potencia por default (%):
+        </label>
+        <div>
+          <c-input-group class="mb-3">
+            <input aria-label="0.00" cFormControl  id="fpDefault" type="number" [(ngModel)]="configRA.fpDefaultNumeros" name="fpDefault" />
+            <span cInputGroupText>%</span>
+          </c-input-group>
+        </div>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="primary" (click)="GuardaConfiguracionRA()">Aceptar</button>
+    <button cButton color="secondary" (click)="muestraConfig = false">Cancelar</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal [visible]="isAutoReportVisible" (visibleChange)="isAutoReportVisible = $event" size="xl">
+  <c-modal-header>Vista previa del reporte</c-modal-header>
+  <c-modal-body style="overflow: auto; max-height: 85vh;" *ngIf="isAutoReportVisible">
+        <app-reporte-automatico (errorEnReporte)="errorEnReporteHandler($event)"
+          (datosObtenidos)="DatosReporteAutomaticoObtenidos($event)" [idInstalacion]="_idInstalacion"
+          [iAnno]="_reporteAutomaticoAnno!" [iMes]="_reporteAutomaticoMes!"></app-reporte-automatico>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="primary" *ngIf="!_guardando" (click)="exportarPDF()">Exportar PDF</button>
+    <button cButton color="primary" *ngIf="_guardando" disabled><c-spinner size="sm"></c-spinner> Exportar PDF</button>
+    <button cButton color="secondary" (click)="isAutoReportVisible = false">Cerrar</button>
+  </c-modal-footer>
+</c-modal>

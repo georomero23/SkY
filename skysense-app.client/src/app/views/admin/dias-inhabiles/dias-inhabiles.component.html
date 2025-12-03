@@ -1,0 +1,24 @@
+<c-card>
+    <c-card-header class="text-center">
+        <div class="d-flex justify-content-center align-items-center gap-3 position-relative">
+            <h3 class="mb-0">
+                Días Festivos del&nbsp;
+                <select class="form-select w-auto d-inline-block" [(ngModel)]="year" (change)="cargarDiasFestivos()">
+                    <option *ngFor="let anio of yearAvailables" [value]="anio">{{ anio }}</option>
+                </select>
+            </h3>
+            <button cButton color="success" class="btn btn-primary ms-3 position-absolute end-0" (click)="guardarCambios()">
+                Guardar cambios
+            </button>
+        </div>
+    </c-card-header>
+    <c-card-body>
+
+        <c-row>
+            <c-col *ngFor="let mes of meses; let i = index">
+                <app-month-calendar [year]="year" [month]="i + 1" [(selectedDays)]="diasFestivos[i]">
+                </app-month-calendar>
+            </c-col>
+        </c-row>
+    </c-card-body>
+</c-card>

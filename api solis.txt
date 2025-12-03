@@ -1,0 +1,12 @@
+KeyID：
+
+1300319277300421136
+
+KeySecret：
+
+931109392bc1410fbddf7a65e365a3c6
+
+API URL：
+
+https://www.soliscloud.com:13333/
+

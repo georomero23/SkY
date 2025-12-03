@@ -1,0 +1,17 @@
+.renglonInactivo{
+    background-color: rgb(187, 183, 183);
+}
+
+.renglonInactivo > *{
+    background-color: rgb(187, 183, 183);
+}
+
+.icono-resaltado:hover{
+    transform: rotateZ(90deg) scale(1.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.icono-resaltado{
+    transform: rotateZ(0) scale(1);
+    transition: all 0.3s ease-in-out;
+}

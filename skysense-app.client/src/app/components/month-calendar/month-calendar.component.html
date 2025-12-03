@@ -1,0 +1,31 @@
+<c-card class="mb-3">
+  <c-card-header class="text-center">
+    <h4 class="mb-0">{{ meses[month - 1] }} {{ year }}</h4>
+  </c-card-header>
+  <c-card-body class="p-0">
+    <div class="table-responsive mb-2">
+      <table class="table table-bordered text-center align-middle mb-0">
+        <thead>
+          <tr>
+            <th *ngFor="let d of diasSemana" style="background-color: var(--sky-th-bg);color:white">{{ d }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let semana of calendario">
+            <td *ngFor="let dia of semana; let col = index"
+                [ngClass]="{'fin-semana': col === 5 || col === 6}">
+              <ng-container *ngIf="dia; else emptyCell">
+                <div class="dia-circulo" [ngClass]="{'seleccionado': esSeleccionado(dia)}" (click)="toggleDia(dia)">
+                  <span class="number">{{ dia }}</span>
+                </div>
+              </ng-container>
+              <ng-template #emptyCell>
+                &nbsp;
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </c-card-body>
+</c-card>

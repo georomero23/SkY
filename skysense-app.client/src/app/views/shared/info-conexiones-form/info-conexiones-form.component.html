@@ -1,0 +1,129 @@
+        <form #formInfo="ngForm" cForm>
+          <h2>Conexiones</h2>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>Url del EMS</label>
+                <c-input-group class="mb-3">
+                    <span cInputGroupText id="basic-addon1">opc.tcp://</span>
+                    <input aria-describedby="basic-addon1"
+                            aria-label="OpcUrl"
+                            cFormControl name="inputUrl"
+                            placeholder="OPC-UA Url" [(ngModel)]="bateriaConfigModificada.url" />
+                </c-input-group>
+              </div>
+              <div class="col-md-4 mb-3">
+                <c-form-check sizing="xl" switch>
+                  <input cFormCheckInput checked type="checkbox" name="checkMonitorear" [(ngModel)]="bateriaConfigModificada.monitorear" />
+                  <label cFormCheckLabel>Monitorear</label>
+                </c-form-check>
+              </div>
+            </div>
+            <h4>Tags</h4>
+            <div class="row">
+                <c-accordion [alwaysOpen]="true">
+                  <c-accordion-item #item0="cAccordionItem" [visible]="false">
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button (click)="item0.toggleItem()" [collapsed]="!item0.visible" cAccordionButton>
+                        Tags de Solo Lectura - Graficables
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <div class="accordion-body">
+                        <app-registro-editor [headers]="[{
+                          key: 'idParametro',
+                          label: 'Tipo',
+                          type: 'select',
+                          options: tagsOpciones | filtrar: [true,true]:['graficable','soloLectura'],
+                        },
+                        {
+                          key: 'etiqueta',
+                          label: 'Tag',
+                          type: 'text'
+                        },
+                        {
+                          key: 'monitorear',
+                          label: 'Monitorear',
+                          type: 'checkbox'
+                        },
+                        {
+                          key: 'nombreAMostrar',
+                          label: 'Nombre a Mostrar',
+                          type: 'text'
+                        },
+                        {
+                          key: 'numeroGrafica',
+                          label: 'No. Gráfica',
+                          type: 'numeric'
+                        }]" idKey="idTag" [registros]="bateriaConfigModificada.tagsBateria| filtrar: [true,true]:['graficable','soloLectura']" (guardar)="GuardarRegistro($event)" (eliminar)="EliminaRegistro($event)" ></app-registro-editor>
+                      </div>
+                    </ng-template>
+                  </c-accordion-item>
+                  <c-accordion-item #item1="cAccordionItem" [visible]="false">
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button (click)="item1.toggleItem()" [collapsed]="!item1.visible" cAccordionButton>
+                        Tags de Solo Lectura - No Graficables
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <div class="accordion-body">
+                        <app-registro-editor [headers]="[{
+                          key: 'idParametro',
+                          label: 'Tipo',
+                          type: 'select',
+                          options: tagsOpciones | filtrar: [false,true]:['graficable','soloLectura'],
+                        },
+                        {
+                          key: 'etiqueta',
+                          label: 'Tag',
+                          type: 'text'
+                        },
+                        {
+                          key: 'monitorear',
+                          label: 'Monitorear',
+                          type: 'checkbox'
+                        },
+                        {
+                          key: 'nombreAMostrar',
+                          label: 'Nombre a Mostrar',
+                          type: 'text'
+                        }]" idKey="idTag" [registros]="bateriaConfigModificada.tagsBateria| filtrar: [false,true]:['graficable','soloLectura']" (guardar)="GuardarRegistro($event)" (eliminar)="EliminaRegistro($event)" ></app-registro-editor>
+                      </div>
+                    </ng-template>
+                  </c-accordion-item>
+                  <c-accordion-item #item2="cAccordionItem" [visible]="false">
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button (click)="item2.toggleItem()" [collapsed]="!item2.visible" cAccordionButton>
+                        Tags de Lectura/Escritura
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <div class="accordion-body">
+                        <app-registro-editor [headers]="[{
+                          key: 'idParametro',
+                          label: 'Tipo',
+                          type: 'select',
+                          options: tagsOpciones | filtrar: [false]:['soloLectura'],
+                        },
+                        {
+                          key: 'etiqueta',
+                          label: 'Tag',
+                          type: 'text'
+                        },
+                        {
+                          key: 'monitorear',
+                          label: 'Monitorear',
+                          type: 'checkbox'
+                        },
+                        {
+                          key: 'nombreAMostrar',
+                          label: 'Nombre a Mostrar',
+                          type: 'text'
+                        }]" idKey="idTag" [registros]="bateriaConfigModificada.tagsBateria | filtrar: [false]:['soloLectura']" (guardar)="GuardarRegistro($event)" (eliminar)="EliminaRegistro($event)" ></app-registro-editor>
+                      </div>
+                    </ng-template>
+                  </c-accordion-item>
+                </c-accordion>
+            </div>
+            <button cButton color="primary" type="submit" (click)="GuardaConfiguracionBateria()">Guardar</button>
+          </form>
+          <app-confirm-dialog #confirmDialog></app-confirm-dialog>

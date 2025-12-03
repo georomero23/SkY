@@ -1,0 +1,65 @@
+<c-card class="mb-4">
+    <c-card-header>
+      <div class="headerBusqueda">
+          <div>
+            Clientes <button variant="ghost" size="sm" cButton (click)="NuevoCliente()" [cTooltip]="'Nuevo Cliente'"><svg [cIcon]="iconos.cilPlus"></svg></button>
+          </div>
+          <div>
+            <form (submit)="BuscarCliente()">
+            <c-input-group>
+              <input aria-label="Busqueda de instalaciones"
+                    cFormControl
+                    placeholder="Nombre | RFC" #inpIns [(ngModel)]="_busqueda" name="busqueda"
+              />
+              <button cButton color="secondary" type="button" variant="outline" (click)=" inpIns.value = '';LimpiarBusqueda();">
+                X
+              </button>
+              <button cButton color="primary" type="button" variant="outline" (click)="BuscarCliente()">
+                Buscar
+              </button>
+            </c-input-group></form>
+          </div>
+        </div>
+    </c-card-header>
+    <c-card-body>
+      <table cTable>
+        <thead>
+          <tr class="text-center">
+            <th scope="col">Nombre</th>
+            <th scope="col">RFC</th>
+            <th scope="col">Especial</th>
+            <th scope="col">No. de instalaciones</th>
+            <th scope="col">Editar</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let cliente of _clientesPaginados.registros;index as i">
+          <td><a [href]="'#/clientes/'+cliente.idCliente">{{cliente.nombre}}</a></td>
+          <td>{{cliente.rfc}}</td>
+          <td class="text-center"><input type="checkbox" [checked]="cliente.esEspecial" disabled></td>
+          <td class="text-center">{{cliente.cuantasInstalaciones}}</td>
+          <td class="text-center">
+            <button [color]="'light'" cButton (click)="mEdita(cliente)"><svg cIcon class="me-2" name="cilPencil"></svg></button>
+            <!-- <button [color]="'light'" cButton (click)="mElimina(i)"><svg cIcon class="me-2" name="cilTrash"></svg></button> -->
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <app-mi-paginador [paginado]="_clientesPaginados" (onPaginaCambiada)="paginacionCambiada($event)"></app-mi-paginador>
+    </c-card-body>
+</c-card>
+
+
+<c-modal [visible]="_modalNewClienteVisible" size="xl" #modalNuevoCliente title="Nuevo Cliente" [scrollable]="true" [backdrop]="'static'" [keyboard]="false" >
+  <c-modal-header>
+    <h5 class="modal-title">{{_modalNuevoCliente ? 'Nuevo' : 'Editar'}} Cliente</h5>
+    <button cButton type="button" class="btn-close" aria-label="Close" (click)="_modalNewClienteVisible=false"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <app-info-cliente-form [infoCliente]="_clienteModal" (guardar)="GuardaInfoCliente($event)"></app-info-cliente-form>
+  </c-modal-body>
+</c-modal>
+
+<app-confirm-dialog title="Cliente ya existente" [visible]="_modalConfirmacionVisible" message="El RFC que intenta ingresar para este cliente ya existe en otro cliente. ¿Desea que se fusionen estos clientes?"
+  confirmText="Fusionar" cancelText="Cancelar" (confirmed)="mFusiona($event)" (cancelled)="_modalConfirmacionVisible = false"></app-confirm-dialog>
+

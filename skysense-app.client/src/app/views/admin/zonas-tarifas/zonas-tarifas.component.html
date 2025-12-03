@@ -1,0 +1,110 @@
+<c-card>
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Zonas y Tarifas</h4>
+        </div>
+    </c-card-header>
+    <c-card-body>
+        <c-row class="mb-3">
+            <c-col [md]="6">
+                <app-month-selector [(month)]="mesSeleccionado" [(year)]="anoSeleccionado" (dateChange)="cargarZonasTarifas()"></app-month-selector>
+            </c-col>
+            <c-col [md]="6" class="text-end">
+                <div class="d-flex align-items-center justify-content-end">
+                    <label for="zonaSelect" class="form-label mb-0 me-2">
+                        Zona
+                    </label>
+                    <select id="zonaSelect" class="form-select w-auto" [(ngModel)]="idZona" (change)="cambiarVista(idZona)">
+                        <option *ngFor="let zona of catalogoZonas" [value]="zona.idOpcion">
+                            {{ zona.infoAdicional }} - {{ zona.nombreOpcion }}
+                        </option>
+                    </select>
+                </div>
+            </c-col>
+        </c-row>
+        <div style="overflow-x: auto;">
+            <table cTable id="tablaZonasTarifas">
+                <thead>
+                    <tr>
+                        <th style="position: sticky; left: 0; background: #fff; z-index: 2;">Tarifa</th>
+                        <th>Transmisión ($/kWh)</th>
+                        <th>Distribución ($/kWh)</th>
+                        <th>Operación del CENACE ($/kWh)</th>
+                        <th>Operación de la Suministradora de Servicios Básicos ($/mes)</th>
+                        <th>Servicios conexos no MEM ($/kWh)</th>
+                        <th>Energía Base ($/kWh)</th>
+                        <th>Energía Intermedia ($/kWh)</th>
+                        <th>Energía Punta ($/kWh)</th>
+                        <th>Energía Semipunta ($/kWh)</th>
+                        <th>Capacidad ($/kWh)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let tarifa of catalogoTarifas; let i = index">
+                        <th style="position: sticky; left: 0; background: #fff; z-index: 1;">{{ tarifa.nombreOpcion }}</th>
+                        <ng-container *ngIf="!esperando">
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorTransmision"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorTransmision')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorDistribucion"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorDistribucion')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorOpCenace"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorOpCenace')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorOpSsb"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorOpSsb')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorServiciosNoMem"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorServiciosNoMem')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorEnergiaBase"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorEnergiaBase')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorEnergiaIntermedia"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorEnergiaIntermedia')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorEnergiaPunta"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorEnergiaPunta')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorEnergiaSemipunta"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorEnergiaSemipunta')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                            <td>
+                                <input type="number" [value]="getZonaTarifa(idZona, tarifa.idOpcion)?.valorCapacidad"
+                                    (change)="setZonaTarifa(idZona, tarifa.idOpcion, $event, 'valorCapacidad')"
+                                        [disabled]="!editando" class="form-control mb-2" />
+                            </td>
+                        </ng-container>
+                        <ng-container *ngIf="esperando">
+                            <td cPlaceholderAnimation="glow" *ngFor="let __ of [1,2,3,4,5,6,7,8,9,10]">
+                                <span cCol="12" cPlaceholder></span>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button cButton color="primary" (click)="editarRegistros()" *ngIf="!editando">Editar</button>
+        <button cButton color="success" (click)="guardarCambios()" *ngIf="editando">Guardar</button>
+        <button cButton color="danger" (click)="cancelarEdicion()" *ngIf="editando">Cancelar</button>
+    </c-card-body>
+</c-card>

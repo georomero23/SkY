@@ -1,0 +1,131 @@
+<h3>Información de la Instalación</h3>
+          <form #formInfo="ngForm" cForm>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>Nombre</label>
+                <input cFormControl name="nombre" [(ngModel)]="infoInsts.nombre" class="form-control" required />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Tipo de Proyecto</label>
+                <select cFormControl name="tipoProyecto" [(ngModel)]="infoInsts.tipoProyecto" class="form-select">
+                  <option *ngFor="let t of catalogoTipoProyecto" [value]="t.idOpcion">{{t.nombreOpcion}}</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Código Proyecto</label>
+                <input cFormControl name="codigoProyecto" [(ngModel)]="infoInsts.codigoProyecto" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>RPU</label>
+                <input cFormControl name="rpu" [(ngModel)]="infoInsts.rpu" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Tarifa</label>
+                <select cFormControl name="tarifa" [(ngModel)]="infoInsts.idCatalogoTarifa" class="form-select">
+                  <option value="">Selecciona una tarifa</option>
+                  <option *ngFor="let t of catalogoTarifas" [value]="t.idOpcion">{{t.nombreOpcion}}</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Año de Instalación</label>
+                <input cFormControl name="instalacion" type="number" step="0" [(ngModel)]="infoInsts.anioInstalacion" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Inicio del sistema</label>
+                <input type="date" name="inicioSistema" [(ngModel)]="infoInsts.inicioOperaciones" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Longitud</label>
+                <input cFormControl name="longitud" [(ngModel)]="infoInsts.longitud" type="text" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Latitud</label>
+                <input cFormControl name="latitud" [(ngModel)]="infoInsts.latitud" type="text" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Ubicación</label>
+                <input cFormControl name="ubicacion" [(ngModel)]="infoInsts.ubicacion" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Estado</label>
+                <input cFormControl name="estado" [(ngModel)]="infoInsts.estado" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Zona</label>
+                <select cFormControl name="zona" [(ngModel)]="infoInsts.zona" class="form-select">
+                  <option value="">Selecciona una zona</option>
+                  <option *ngFor="let p of catalogoDivisiones" [value]="p.idOpcion">{{p.nombreOpcion}} - {{p.infoAdicional}}</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Inicio de Garantía</label>
+                <input cFormControl name="inicioGarantia" [(ngModel)]="infoInsts.garantiaInicio" type="date"
+                  class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Fin de Garantía</label>
+                <input cFormControl name="finGarantia" [(ngModel)]="infoInsts.garantiaFin" type="date"
+                  class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Estado de garantía</label>
+                <select cFormControl name="estadoGarantia" [(ngModel)]="infoInsts.idCatalogoGarantiaEstatus" class="form-select">
+                  <option value="">Selecciona estado de garantía</option>
+                  <option *ngFor="let e of catalogoGarantias" [value]="e.idOpcion">{{e.nombreOpcion}}</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Status</label>
+                <select cFormControl name="status" [(ngModel)]="infoInsts.idCatalogoEstatus" class="form-select">
+                  <option value="">Selecciona status</option>
+                  <option *ngFor="let s of catalogoEstatusInst" [value]="s.idOpcion">{{s.nombreOpcion}}</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="form-check">
+                  <input cFormControl type="checkbox" name="financiados" [(ngModel)]="infoInsts.esFinanciado"
+                    class="form-check-input" />
+                  <label class="form-check-label" for="financiados">¿Está financiado?</label>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Potencia Inst kWp</label>
+                <input cFormControl name="potenciaInstKwp" [(ngModel)]="infoInsts.potenciaInstalada" type="number"
+                  class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Desgaste Paneles %</label>
+                <input cFormControl name="desgastePaneles" [(ngModel)]="infoInsts.porcentajeDesgastePaneles" type="number"
+                  class="form-control" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>Plataforma</label>
+                <select cFormControl name="plataforma" [(ngModel)]="infoInsts.idPlataforma" class="form-select">
+                  <option value="">Selecciona una plataforma</option>
+                  <option *ngFor="let p of catalogoPlataformas" [value]="p.idOpcion">{{p.nombreOpcion}}</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Id API</label>
+                <input cFormControl name="idApi" [(ngModel)]="infoInsts.idInstalacionApi" class="form-control" />
+              </div>
+            </div>
+            <h4>Contacto</h4>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>Nombre contacto</label>
+                <input cFormControl name="nombreContacto" [(ngModel)]="infoInsts.contactoNombre" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Teléfono</label>
+                <input cFormControl name="telefono" [(ngModel)]="infoInsts.contactoTelefono" class="form-control" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Email</label>
+                <input cFormControl name="email" [(ngModel)]="infoInsts.contactoEmail" type="email" class="form-control" />
+              </div>
+            </div>
+            <button cButton color="primary" type="submit" (click)="GuardaInfoInstalacion()">Guardar</button>
+          </form>

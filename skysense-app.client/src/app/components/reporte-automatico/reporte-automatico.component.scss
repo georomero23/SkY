@@ -1,0 +1,110 @@
+.reporte-header{
+	flex-direction: row;
+	justify-content: space-between; 
+	background-color: #002E9C;
+	font-size: 20pt;
+	align-items: center;
+	color: white;
+	
+}
+
+.texto-label{
+	font-weight: bold;
+	text-transform: capitalize;
+	font-size: 14;
+}
+
+.texto-valor{
+	font-size: 14;
+}
+
+.seccion-header{
+	background-color: #002E9C;
+	display: flex;
+	flex-direction: row;
+	color: white;
+	font-weight: bold;
+	font-size: 14pt;
+	padding: 5px;
+	margin-top: 10px;
+	justify-content: space-around;
+}
+
+.cap-ins{
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-direction: row;
+	text-transform: capitalize;
+}
+
+table.zebra>tr:nth-child(2n+1){
+	background-color: aliceblue;
+}
+
+table.zebra>tr:nth-child(2n+2){
+	background-color: transparent;
+}
+
+table.zebra-header>tr:first-child{
+	background-color: black;
+	color:white;
+	font-weight: bold;
+	text-align: center;
+}
+
+.dinero::before{
+	content: '$';
+}
+
+.dinero{
+	display: flex;
+	justify-content: space-between;
+	margin: 2px;
+}
+
+.texto-ambiente{
+	font-size: 16pt;
+}
+
+.texto-info{
+	font-size: 12pt;
+}
+
+.contenedor-grafica-1{
+	height: 60px;
+	width: 100%;
+}
+
+.contenedor-grafica-1>c-chart, .contenedor-grafica-2-3 c-chart,.contenedor-grafica-linea>c-chart {
+	height: 100% !important;
+	width: 100% !important;
+}
+
+.contenedor-grafica-2-3{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.c-2-3{
+	height: 200px;
+}
+
+.contenedor-grafica-2-3>div:first-child{
+	width: 63%;
+}
+
+.contenedor-grafica-2-3>div:last-child{
+	width: 31%;
+}
+
+table.tabla-ahorro>tr:last-child{
+	background-color: #002E9C;
+	color: white;
+}
+
+.contenedor-grafica-linea{
+	height: 300px;
+}
+
+

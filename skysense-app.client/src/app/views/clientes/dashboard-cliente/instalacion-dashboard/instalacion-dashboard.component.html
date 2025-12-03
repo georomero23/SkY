@@ -1,0 +1,325 @@
+<c-row class="my-4">
+  <c-col [xs]="6">
+    <c-row>
+      <c-col [xs]="6">
+        <c-card class="card mb-3 alineense2">
+          <c-card-body class="card-body d-flex align-items-center">
+            <div class="me-1 text-white p-1">
+              <svg [cIcon]="iconos.cilDescription"  size="xl" width="24"></svg>
+            </div>
+            <div>
+              <div class="fs-6 fw-semibold">
+                Número de servicio
+              </div>
+              <div class="text-body-secondary small text-uppercase fw-semibold">{{_Instalacion?.sNumeroServicio??''}}</div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+      <c-col [xs]="6">
+        <c-card class="card mb-3 alineense2">
+          <c-card-body class="card-body d-flex align-items-center">
+            <div class="me-1 text-white p-1">
+              <svg [cIcon]="iconos.cilList"  size="xl" width="24"></svg>
+            </div>
+            <div>
+              <div class="fs-6 fw-semibold">
+                Tipo de tarifa
+              </div>
+              <div class="text-body-secondary small text-uppercase fw-semibold">{{_Instalacion?.sTipoTarifa??''}}</div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+      <c-col [xs]="6">
+        <c-card class="card mb-3 alineense2">
+          <c-card-body class="card-body d-flex align-items-center">
+            <div class="me-1 text-white p-1">
+              <svg [cIcon]="iconos.cilGrid"  size="xl" width="24"></svg>
+            </div>
+            <div>
+              <div class="fs-6 fw-semibold">
+                RPU
+              </div>
+              <div class="text-body-secondary small text-uppercase fw-semibold">{{_Instalacion?.rPU}}</div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+      <c-col [xs]="6">
+        <c-card class="card mb-3 alineense">
+          <c-card-body>
+            <div style="font-weight: bold;">Ubicación</div>
+            <div style="font-size: x-small;">{{_Instalacion?.sDireccion??'Sin datos'}}</div>
+          </c-card-body>
+        </c-card>
+        <!-- <c-widget-stat-f [title]="_Instalacion?.sDireccion??'Sin datos'" class="mb-3" color="" padding value="Ubicación">
+        </c-widget-stat-f> -->
+      </c-col>
+    </c-row>
+  </c-col>
+  <c-col [xs]="2">
+    <c-card class="cards alineense" [cModalToggle]="'modalPaneles'" (click)="MostrandoModalPaneles()">
+      <c-card-body >
+        <div>
+          <svg [cIcon]="iconos.cilGrid" size="xl" width="32"></svg>
+        </div>
+        <h3>
+          {{_cantidadPaneles}}
+        </h3>
+        <div>
+          Paneles
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col [xs]="2">
+    <c-card class="cards alineense">
+      <c-card-body >
+        <div>
+          <svg [cIcon]="iconos.cilBolt" size="xl" width="32"></svg>
+        </div>
+        <h3 class="no-wrap">
+          {{(_potenciaPaneles/(_cantidadPaneles == 0?1:_cantidadPaneles))|potenciaRedondeo:0:"Wp"}}
+        </h3>
+        <div>
+          Potencia Panel
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col [xs]="2">
+    <c-card  class="cards alineense">
+      <c-card-body>
+        <div>
+          <svg [cIcon]="iconos.cilChartPie" size="xl" width="32"></svg>
+        </div>
+        <h3 class="no-wrap">
+          {{ _potenciaPaneles | potenciaRedondeo:0:"Wp"}}
+        </h3>
+        <div>
+          Potencia Sistema
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+<c-row>
+  <c-col [xs]="6">
+    <c-card>
+      <c-card-body>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            Inversores
+          </div>
+          <button cButton color="primary" [cModalToggle]="'modalInversores'">
+            Administrar Inversores
+          </button>
+        </div>
+        <div style="overflow: auto;">
+          <table cTable>
+            <thead>
+            <tr>
+              <th scope="col">Marca del Inversor</th>
+              <th scope="col">Potencia a la salida del inversor por inversor</th>
+              <th scope="col">Número de serie</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let inversor of _inversores">
+              <td>{{inversor.marca}}</td>
+              <td>{{inversor.potencia}}</td>
+              <td>{{inversor.numeroSerie}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col [xs]="2">
+    <c-card class="cards alineense" color="success" textColor="white">
+      <c-card-body>
+        <div>
+          <svg [cIcon]="iconos.cilFlagAlt" size="xl" width="32"></svg>
+        </div>
+        <div>
+          Buena Generación
+        </div>
+        <div>
+          Estatus
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col [xs]="2">
+    <c-card class="cards alineense">
+      <c-card-body>
+        <div>
+          <svg [cIcon]="iconos.cilCheckCircle" size="xl" width="32"></svg>
+        </div>
+        <h3>
+          420.82 kWh
+        </h3>
+        <div>
+          Garantía Anual
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col [xs]="2">
+    <c-card class="cards alineense">
+      <c-card-body>
+        <div>
+          <svg [cIcon]="iconos.cilAlarm" size="xl" width="32"></svg>
+        </div>
+        <h3>
+          4:00 hrs
+        </h3>
+        <div>
+          Horas sol diarias garantizadas
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-modal
+  backdrop="static"
+  id="modalInversores"
+  #modalInversores
+  size="xl"
+>
+  <c-modal-header>
+    <h5 cModalTitle>Administración de Inversores</h5>
+    <button [cModalToggle]="'modalImportarInversores'"><svg [cIcon]="iconos.cilCloudUpload" size="sm"></svg></button>
+    <button [cModalToggle]="'modalInversores'" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+      <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
+                                      { key:'marca', label:'Marca', mandatory: true },
+                                      { key:'modelo', label:'Modelo', mandatory: true },
+                                      { key:'potencia', label:'Potencia (W)', mandatory: true },
+                                      { key:'degradacionAnual', label:'Degr. Anual (%)', mandatory: true },
+                                      { key:'proveedorSuministrador', label:'Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorSuministradorRfc', label:'RFC Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorIntermediario', label:'Proveedor Intermediario', mandatory: true },
+                                      { key:'proveedorIntermediarioRfc', label:'RFC Proveedor Intermediario', mandatory: true },
+                                      { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
+                                      { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
+                                      { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
+   [registros]="_inversores" idKey="idInversor" (guardar)="guardarInversor($event)" (eliminar)="mEliminarAparato('I',$event)" ></app-registro-editor>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" [cModalToggle]="'modalInversores'">Cerrar</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  backdrop="static"
+  id="modalPaneles"
+  #modalPaneles
+  size="xl"
+>
+  <c-modal-header>
+    <h5 cModalTitle>Administración de Paneles</h5>
+    <button cButton [cModalToggle]="'modalImportarPaneles'"><svg [cIcon]="iconos.cilCloudUpload" size="sm"></svg></button>
+    <button [cModalToggle]="'modalPaneles'" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+      <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
+                                      { key:'marca', label:'Marca', mandatory: true },
+                                      { key:'modelo', label:'Modelo', mandatory: true },
+                                      { key:'potencia', label:'Potencia (W)', mandatory: true },
+                                      { key:'degradacionAnual', label:'Degr. Anual (%)', mandatory: true },
+                                      { key:'proveedorSuministrador', label:'Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorSuministradorRfc', label:'RFC Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorIntermediario', label:'Proveedor Intermediario', mandatory: true },
+                                      { key:'proveedorIntermediarioRfc', label:'RFC Proveedor Intermediario', mandatory: true },
+                                      { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
+                                      { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
+                                      { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
+   [registros]="_paneles" idKey="idPanel" (guardar)="guardarPanel($event)"  (eliminar)="mEliminarAparato('P',$event)" ></app-registro-editor>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" [cModalToggle]="'modalPaneles'">Cerrar</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  backdrop="static"
+  id="modalImportarPaneles"
+  #modalImportarPaneles
+  size="xl"
+>
+  <c-modal-header>
+    <h5 cModalTitle>Importación de Paneles</h5>
+    <button [cModalToggle]="'modalImportarPaneles'" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <div *ngIf="_panelesImportados!.length > 0">
+      <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
+                                      { key:'marca', label:'Marca', mandatory: true },
+                                      { key:'modelo', label:'Modelo', mandatory: true },
+                                      { key:'potencia', label:'Potencia (W)', mandatory: true },
+                                      { key:'degradacionAnual', label:'Degr. Anual (%)', mandatory: true },
+                                      { key:'proveedorSuministrador', label:'Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorSuministradorRfc', label:'RFC Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorIntermediario', label:'Proveedor Intermediario', mandatory: true },
+                                      { key:'proveedorIntermediarioRfc', label:'RFC Proveedor Intermediario', mandatory: true },
+                                      { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
+                                      { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
+                                      { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
+   [registros]="_panelesImportados" idKey="idPanel"  [esEstatico]="true" ></app-registro-editor>
+      <div class="text-center mt-3">
+        <button cButton color="primary" (click)="GuardarImportacionArchivoPaneles()">Guardar Paneles Importados</button>
+        <button cButton color="primary" (click)="cambiarDeArchivo()">Elegir otro archivo</button>
+      </div>
+    </div>
+    <div *ngIf="!(_panelesImportados!.length > 0)">
+      <app-file-upload (fileSelected)="onFileSelectedPanel($event)"></app-file-upload>
+    </div>      
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" [cModalToggle]="'modalImportarPaneles'">Cerrar</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal
+  backdrop="static"
+  id="modalImportarInversores"
+  #modalImportarInversores
+  size="xl"
+>
+  <c-modal-header>
+    <h5 cModalTitle>Importación de Inversores</h5>
+    <button [cModalToggle]="'modalImportarInversores'" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <div *ngIf="_inversoresImportados!.length > 0">
+      <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
+                                      { key:'marca', label:'Marca', mandatory: true },
+                                      { key:'modelo', label:'Modelo', mandatory: true },
+                                      { key:'potencia', label:'Potencia (W)', mandatory: true },
+                                      { key:'degradacionAnual', label:'Degr. Anual (%)', mandatory: true },
+                                      { key:'proveedorSuministrador', label:'Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorSuministradorRfc', label:'RFC Proveedor Suministrador', mandatory: true },
+                                      { key:'proveedorIntermediario', label:'Proveedor Intermediario', mandatory: true },
+                                      { key:'proveedorIntermediarioRfc', label:'RFC Proveedor Intermediario', mandatory: true },
+                                      { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
+                                      { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
+                                      { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
+   [registros]="_inversoresImportados" idKey="idInversor"  [esEstatico]="true" ></app-registro-editor>
+      <div class="text-center mt-3">
+        <button cButton color="primary" (click)="GuardarImportacionArchivoInversores()">Guardar Inversores Importados</button>
+        <button cButton color="primary" (click)="cambiarDeArchivo()">Elegir otro archivo</button>
+      </div>
+    </div>
+    <div *ngIf="!(_inversoresImportados!.length > 0)">
+      <app-file-upload (fileSelected)="onFileSelectedInversor($event)"></app-file-upload>
+    </div>      
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" [cModalToggle]="'modalImportarInversores'">Cerrar</button>
+  </c-modal-footer>
+</c-modal>

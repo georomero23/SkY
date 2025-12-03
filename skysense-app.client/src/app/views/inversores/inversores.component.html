@@ -1,0 +1,49 @@
+<c-card class="mb-4">
+    <c-card-header>
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+            Inversores
+          </div>
+          <div>
+            <form (submit)="ObtenerInversores(1); $event.preventDefault()" style="display: contents;" name="form1">
+            <c-input-group>
+              <input aria-label="Busqueda de instalaciones"
+                    cFormControl
+                    placeholder="Marca | Modelo | No. Serie" [(ngModel)]="buscador" name="busq"
+              />
+              <button cButton color="secondary" type="button" variant="outline" (click)="buscador='';ObtenerInversores(1)">
+                X
+              </button>
+              <button cButton color="primary" type="button" variant="outline" (click)="ObtenerInversores(1)">
+                Buscar
+              </button>
+            </c-input-group>
+          </form>
+          </div>
+      </div>
+    </c-card-header>
+    <c-card-body>
+      <table cTable>
+        <thead>
+          <tr>
+            <th scope="col">Instalación</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Modelo</th>
+            <th scope="col">Número de serie</th>
+            <th scope="col">Potencia kWh</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inversor of _inversoresPaginados.registros">
+            <td><a [routerLink]="['/clientes', inversor.idCliente, inversor.idInstalacion]">{{ inversor.instalacion }}</a></td>
+            <!-- <td><a [href]="'#/clientes/' + inversor.idCliente + '/' + inversor.idInstalacion">{{ inversor.instalacion }}</a></td> -->
+            <td>{{ inversor.marca }}</td>
+            <td>{{ inversor.modelo }}</td>
+            <td>{{ inversor.numeroSerie }}</td>
+            <td>{{ inversor.potencia }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <app-mi-paginador [paginado]="_inversoresPaginados" (onPaginaCambiada)="ObtenerInversores($event)"></app-mi-paginador>
+    </c-card-body>
+</c-card>

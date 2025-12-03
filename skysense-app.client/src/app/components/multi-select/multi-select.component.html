@@ -1,0 +1,17 @@
+<div class="dropdown" [class.show]="open" (clickOutside)="cerrando()" clickOutside>
+  <button type="button" class="form-select" (click)="toggleDropdown()" [attr.aria-expanded]="open">
+    {{ getSelectedLabels() || placeholder }}
+    <span class="dropdown-toggle"></span>
+  </button>
+  <div class="dropdown-menu w-100" [class.show]="open">
+    <label *ngFor="let opt of options" class="form-check dropdown-item mb-1">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        [checked]="selected.includes(opt.value)"
+        (change)="toggleSelection(opt.value, $event.target); $event.stopPropagation();"
+      />
+      <span class="form-check-label">{{ opt.label }}</span>
+    </label>
+  </div>
+</div>

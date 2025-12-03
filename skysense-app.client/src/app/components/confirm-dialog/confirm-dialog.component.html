@@ -1,0 +1,13 @@
+<c-modal [visible]="visible" (visibleChange)="visible = $event">
+  <c-modal-header>
+    <h5 cModalTitle>{{ title }}</h5>
+    <button cButtonClose (click)="cancel()"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <div>{{ message }}</div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="cancel()">{{ cancelText }}</button>
+    <button cButton color="danger" (click)="confirm()">{{ confirmText }}</button>
+  </c-modal-footer>
+</c-modal>

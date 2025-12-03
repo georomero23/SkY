@@ -1,0 +1,12 @@
+{
+   "/api": {
+     "target": "http://localhost:5045",
+     "secure": false,
+     "ws": true
+   },
+   "/skyhub": {
+     "target": "http://localhost:5045",
+     "secure": false,
+      "ws": true
+   } 
+ }

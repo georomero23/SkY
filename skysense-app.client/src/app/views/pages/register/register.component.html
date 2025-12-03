@@ -1,0 +1,40 @@
+<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
+  <c-container>
+    <c-row class="justify-content-center">
+      <c-col lg="7" md="9" xl="6">
+        <c-card class="mx-4">
+          <c-card-body class="p-4">
+            <form #customStylesForm="ngForm"
+                (ngSubmit)="onSubmit1()"
+                [validated]="customStylesValidated"
+                cForm
+                class="needs-validation" [formGroup]="registroForm">
+              <h1>Registro</h1>
+              <p class="text-body-secondary">Crea una cuenta</p>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>&#64;</span>
+                <input autoComplete="email" formControlName="correo" cFormControl placeholder="Email" />
+              </c-input-group>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+                <input autoComplete="new-password" formControlName="contrasena"  cFormControl placeholder="Contraseña" type="password" />
+              </c-input-group>
+              <c-input-group class="mb-4">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+                <input autoComplete="new-password" formControlName="contrasena2" required  cFormControl placeholder="Repetir contraseña" type="password" />
+                <span *ngIf="registroForm.get('contrasena2')?.errors?.['mustMatch']" class="invalid-feedback">Las contraseñas no coinciden.</span>
+              </c-input-group>
+              <div class="d-grid">
+                <button cButton color="success" type="submit">Crear cuenta</button>
+              </div>
+            </form>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>

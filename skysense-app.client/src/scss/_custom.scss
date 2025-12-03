@@ -1,0 +1,91 @@
+// Here you can add other styles
+
+// custom .chartjs-tooltip-body-item padding
+@use "charts";
+
+// custom tweaks for scrollbar styling (wip)
+@use "scrollbar";
+
+ // custom calendar today cell color
+.calendar-cell.today {
+  --cui-calendar-cell-today-color: var(--cui-info) !important;
+}
+
+// custom select week cursor pointer
+.select-week .calendar-row.current {
+  cursor: pointer;
+}
+
+.sidebar-dark {
+    --cui-body-bg: #1C2F3D;
+    --cui-sidebar-nav-link-active-bg: #2F5777;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../assets/Montserrat-VariableFont_wght.ttf');
+}
+
+*{
+  font-family: 'Montserrat';
+}
+
+
+/* Add application styles & imports to this file! */
+.g-skeleton {
+  border-radius: 10px;
+  background-color: rgb(224, 224, 224);
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+  transform: scale(1);
+  animation: pulse 2s infinite;
+}
+
+.g-image-height {
+  height: 200px;
+  width: 200px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    border-radius: 2px;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    border-radius: 10px;
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    border-radius: 2px;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.status-circle {
+  width: 15px; /* Adjust size as needed */
+  height: 15px; /* Must match width for a perfect circle */
+  border-radius: 50%; /* Makes the element circular */
+  display: inline-block; /* Allows circles to sit next to each other */
+  margin-right: 5px; /* Spacing between circles */
+}
+
+/* Status-specific colors */
+.status-circle.status-2 {
+  background-color: green;
+}
+
+.status-circle.status-3, .status-circle.status-5 {
+  background-color: red;
+}
+
+.status-circle.status-1 {
+  background-color: gray;
+}
+
+.status-circle.status-4 {
+  background-color: orange;
+}
