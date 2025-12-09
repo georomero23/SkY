@@ -29,7 +29,14 @@ export class ReporteAutomaticoComponent implements OnInit, OnDestroy, OnChanges 
   @Input() idInstalacion: number | null = null;
   @Input() iAnno: number | null = null;
   @Input() iMes: number | null = null;
-  @Input() mostrarBT2: boolean = false;
+
+  private _mostrarBT2: boolean = false;
+  @Input() set mostrarBT2(value: any) {
+    this._mostrarBT2 = this.toBoolean(value);
+  }
+  get mostrarBT2(): boolean {
+    return this._mostrarBT2;
+  }
   constructor(private cd: ChangeDetectorRef) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -259,4 +266,13 @@ export class ReporteAutomaticoComponent implements OnInit, OnDestroy, OnChanges 
     this.chart5?.destroy();
     Chart.unregister(ChartDataLabels);
   }
+
+  private toBoolean(value: any): boolean {
+    if (typeof value === 'string') {
+      value = value.trim().toLowerCase();
+    }
+
+    return value === true || value === 'true' || value === 1 || value === '1';
+  }
+
 }

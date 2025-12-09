@@ -157,7 +157,8 @@
         <input type="checkbox"
                class="form-check-input"
                [(ngModel)]="configRA.bajaTension2"
-               id="chkBT2" />
+               id="chkBT2"
+               name="hola"/>
         <label class="form-check-label"
                for="chkBT2"
                cTooltip="Aplicar ajuste del 2% por baja tensión"
@@ -180,7 +181,7 @@
     <app-reporte-automatico [idInstalacion]="_idInstalacion"
                             [iAnno]="_reporteAutomaticoAnno"
                             [iMes]="_reporteAutomaticoMes"
-                            [mostrarBT2]="configRA.bajaTension2 === true">
+                            [mostrarBT2]="!!configRA.bajaTension2">>
     </app-reporte-automatico>
   </c-modal-body>
   <c-modal-footer>

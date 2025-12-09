@@ -17,3 +17,91 @@ svg{
     justify-content: center;
     display: flex;
 }
+
+.stats-row {
+  align-items: stretch; 
+}
+
+svg {
+  color: var(--cui-primary);
+}
+
+.alineense,
+.alineense2 {
+  height: 100%;
+  text-align: center;
+}
+
+  .alineense > .card-body {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .alineense2 > .card-body {
+    justify-content: center;
+    display: flex;
+  }
+
+.cards {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+  .cards > .card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+.tabla-inversores {
+  overflow: auto; 
+}
+
+.titulo-inversores {
+  margin-bottom: 12px;
+}
+
+.titulo-texto {
+  margin-right: 12px; 
+}
+
+.inversores-header {
+  margin-bottom: 12px; 
+}
+
+.inversores-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.btn-admin-inversores {
+  padding: 6px 16px !important;
+  font-size: 0.90rem !important;
+  border-radius: 6px !important;
+}
+
+.inversores-table {
+  margin-top: 4px;
+}
+
+//ESTILOS CARDS ALTURAS ALINEADOS
+c-col {
+  display: flex;
+}
+
+  c-col > c-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+c-card > c-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

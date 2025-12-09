@@ -181,7 +181,7 @@
                 <td><div class="dinero">{{_reportData?.distribucionSPaneles | zeroToDash}}</div></td>
                 <td><div class="dinero">{{_reportData?.distribucionAhorro | zeroToDash}}</div></td>
               </tr>
-              <tr *ngIf="mostrarBT2 === true">
+              <tr *ngIf="!!mostrarBT2">
                 <td>Baja Tensión 2%</td>
                 <td><div class="dinero">{{ _reportData?.bajaTension2C | zeroToDash }}</div></td>
                 <td><div class="dinero">{{ _reportData?.bajaTension2S | zeroToDash }}</div></td>

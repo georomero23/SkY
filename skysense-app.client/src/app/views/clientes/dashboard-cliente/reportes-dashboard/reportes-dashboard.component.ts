@@ -117,6 +117,7 @@ export class ReportesDashboardComponent {
       next: (data) => {
         if (data.exito) {
           this.configRA = new ReporteAutomaticoConfig(data.data);
+          this.configRA.bajaTension2 = this.toBoolean(this.configRA.bajaTension2);
           this.configRA.porcentajeDapNumeros = this.configRA.porcentajeDap * 100;
           this.configRA.fpDefaultNumeros = this.configRA.fpDefault * 100;
 
@@ -130,7 +131,10 @@ export class ReportesDashboardComponent {
     });
   }
 
-  private toBoolean(value: any): boolean {
+  toBoolean(value: any): boolean {
+    if (typeof value === 'string') {
+      value = value.trim().toLowerCase();
+    }
     return value === true || value === 'true' || value === 1 || value === '1';
   }
 
@@ -356,8 +360,8 @@ export class ReportesDashboardComponent {
     nuevaConfig.porcentajeDap = this.configRA.porcentajeDapNumeros / 100;
     nuevaConfig.umbralFp = this.configRA.umbralFp;
     nuevaConfig.fpDefault = this.configRA.fpDefaultNumeros / 100;
-    nuevaConfig.bajaTension2 = this.configRA.bajaTension2;
-
+    nuevaConfig.bajaTension2 = this.toBoolean(this.configRA.bajaTension2);
+    console.log(this.configRA.bajaTension2);
 
     this.#instalacionService.mGuardaConfiguracionReporteAutomatico(this._idInstalacion, nuevaConfig)
       .subscribe({

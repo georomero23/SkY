@@ -634,6 +634,8 @@ public partial class SkysenseDevContext : DbContext
             entity.Property(e => e.UmbralFp)
                 .HasColumnType("decimal(3, 2)")
                 .HasColumnName("UmbralFP");
+            entity.Property(e => e.BajaTension2)
+                .HasColumnName("BajaTension2");
 
             entity.HasOne(d => d.IdInstalacionNavigation).WithOne(p => p.ReporteAutomaticoConfig)
                 .HasForeignKey<ReporteAutomaticoConfig>(d => d.IdInstalacion)

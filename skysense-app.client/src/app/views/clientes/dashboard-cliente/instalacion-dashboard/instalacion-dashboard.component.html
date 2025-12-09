@@ -5,7 +5,7 @@
         <c-card class="card mb-3 alineense2">
           <c-card-body class="card-body d-flex align-items-center">
             <div class="me-1 text-white p-1">
-              <svg [cIcon]="iconos.cilDescription"  size="xl" width="24"></svg>
+              <svg [cIcon]="iconos.cilDescription" size="xl" width="24"></svg>
             </div>
             <div>
               <div class="fs-6 fw-semibold">
@@ -20,7 +20,7 @@
         <c-card class="card mb-3 alineense2">
           <c-card-body class="card-body d-flex align-items-center">
             <div class="me-1 text-white p-1">
-              <svg [cIcon]="iconos.cilList"  size="xl" width="24"></svg>
+              <svg [cIcon]="iconos.cilList" size="xl" width="24"></svg>
             </div>
             <div>
               <div class="fs-6 fw-semibold">
@@ -35,7 +35,7 @@
         <c-card class="card mb-3 alineense2">
           <c-card-body class="card-body d-flex align-items-center">
             <div class="me-1 text-white p-1">
-              <svg [cIcon]="iconos.cilGrid"  size="xl" width="24"></svg>
+              <svg [cIcon]="iconos.cilGrid" size="xl" width="24"></svg>
             </div>
             <div>
               <div class="fs-6 fw-semibold">
@@ -60,7 +60,7 @@
   </c-col>
   <c-col [xs]="2">
     <c-card class="cards alineense" [cModalToggle]="'modalPaneles'" (click)="MostrandoModalPaneles()">
-      <c-card-body >
+      <c-card-body>
         <div>
           <svg [cIcon]="iconos.cilGrid" size="xl" width="32"></svg>
         </div>
@@ -75,7 +75,7 @@
   </c-col>
   <c-col [xs]="2">
     <c-card class="cards alineense">
-      <c-card-body >
+      <c-card-body>
         <div>
           <svg [cIcon]="iconos.cilBolt" size="xl" width="32"></svg>
         </div>
@@ -89,7 +89,7 @@
     </c-card>
   </c-col>
   <c-col [xs]="2">
-    <c-card  class="cards alineense">
+    <c-card class="cards alineense">
       <c-card-body>
         <div>
           <svg [cIcon]="iconos.cilChartPie" size="xl" width="32"></svg>
@@ -104,15 +104,14 @@
     </c-card>
   </c-col>
 </c-row>
-<c-row>
+<c-row class="mb-2">
   <c-col [xs]="6">
     <c-card>
       <c-card-body>
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            Inversores
-          </div>
-          <button cButton color="primary" [cModalToggle]="'modalInversores'">
+        <div class="d-flex justify-content-between align-items-center inversores-header">
+          <div class="inversores-title">Inversores</div>
+          <button cButton color="primary" class="btn-admin-inversores"
+                  [cModalToggle]="'modalInversores'">
             Administrar Inversores
           </button>
         </div>
@@ -137,19 +136,17 @@
       </c-card-body>
     </c-card>
   </c-col>
-  <c-col [xs]="2">
-    <c-card class="cards alineense"
+  <c-col [xs]="2" class="d-flex">
+    <c-card class="cards alineense w-100"
             [color]="estatusColor"
             [textColor]="estatusColor === 'secondary' ? 'dark' : 'white'">
       <c-card-body>
         <div>
           <svg [cIcon]="iconos.cilFlagAlt" size="xl" width="32"></svg>
         </div>
-
         <div class="fw-semibold">
           {{ estatusTexto }}
         </div>
-
         <div class="fs-4 fw-bold">
           {{ (porcentajeEficacia ?? 0) | number:'1.0-2' }}%
         </div>
@@ -157,51 +154,45 @@
     </c-card>
   </c-col>
 
-  <c-col [xs]="2">
-    <c-card class="cards alineense">
+  <!--<c-col [xs]="2">
+    <c-card class="cards alineense">-->
+  <c-col [xs]="2" class="d-flex">
+    <c-card class="cards alineense w-100">
       <c-card-body>
         <div>
           <svg [cIcon]="iconos.cilCheckCircle" size="xl" width="32"></svg>
         </div>
-        <h3>
-          420.82 kWh
-        </h3>
-        <div>
-          Garantía Anual
-        </div>
+        <h3>420.82 kWh</h3>
+        <div>Garantía Anual</div>
       </c-card-body>
     </c-card>
   </c-col>
-  <c-col [xs]="2">
-    <c-card class="cards alineense">
+  <!--<c-col [xs]="2">
+    <c-card class="cards alineense">-->
+  <c-col [xs]="2" class="d-flex">
+    <c-card class="cards alineense w-100">
       <c-card-body>
         <div>
           <svg [cIcon]="iconos.cilAlarm" size="xl" width="32"></svg>
         </div>
-        <h3>
-          4:00 hrs
-        </h3>
-        <div>
-          Horas sol diarias garantizadas
-        </div>
+        <h3>4:00 hrs</h3>
+        <div>Horas sol diarias garantizadas</div>
       </c-card-body>
     </c-card>
   </c-col>
 </c-row>
 
-<c-modal
-  backdrop="static"
-  id="modalInversores"
-  #modalInversores
-  size="xl"
->
+<c-modal backdrop="static"
+         id="modalInversores"
+         #modalInversores
+         size="xl">
   <c-modal-header>
     <h5 cModalTitle>Administración de Inversores</h5>
     <button [cModalToggle]="'modalImportarInversores'"><svg [cIcon]="iconos.cilCloudUpload" size="sm"></svg></button>
     <button [cModalToggle]="'modalInversores'" cButtonClose></button>
   </c-modal-header>
   <c-modal-body>
-      <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
+    <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
                                       { key:'marca', label:'Marca', mandatory: true },
                                       { key:'modelo', label:'Modelo', mandatory: true },
                                       { key:'potencia', label:'Potencia (W)', mandatory: true },
@@ -213,26 +204,24 @@
                                       { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
                                       { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
                                       { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
-   [registros]="_inversores" idKey="idInversor" (guardar)="guardarInversor($event)" (eliminar)="mEliminarAparato('I',$event)" ></app-registro-editor>
+                         [registros]="_inversores" idKey="idInversor" (guardar)="guardarInversor($event)" (eliminar)="mEliminarAparato('I',$event)"></app-registro-editor>
   </c-modal-body>
   <c-modal-footer>
     <button cButton color="secondary" [cModalToggle]="'modalInversores'">Cerrar</button>
   </c-modal-footer>
 </c-modal>
 
-<c-modal
-  backdrop="static"
-  id="modalPaneles"
-  #modalPaneles
-  size="xl"
->
+<c-modal backdrop="static"
+         id="modalPaneles"
+         #modalPaneles
+         size="xl">
   <c-modal-header>
     <h5 cModalTitle>Administración de Paneles</h5>
     <button cButton [cModalToggle]="'modalImportarPaneles'"><svg [cIcon]="iconos.cilCloudUpload" size="sm"></svg></button>
     <button [cModalToggle]="'modalPaneles'" cButtonClose></button>
   </c-modal-header>
   <c-modal-body>
-      <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
+    <app-registro-editor [headers]="[{ key:'numeroSerie', label:'No. de serie', mandatory: true },
                                       { key:'marca', label:'Marca', mandatory: true },
                                       { key:'modelo', label:'Modelo', mandatory: true },
                                       { key:'potencia', label:'Potencia (W)', mandatory: true },
@@ -244,19 +233,17 @@
                                       { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
                                       { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
                                       { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
-   [registros]="_paneles" idKey="idPanel" (guardar)="guardarPanel($event)"  (eliminar)="mEliminarAparato('P',$event)" ></app-registro-editor>
+                         [registros]="_paneles" idKey="idPanel" (guardar)="guardarPanel($event)" (eliminar)="mEliminarAparato('P',$event)"></app-registro-editor>
   </c-modal-body>
   <c-modal-footer>
     <button cButton color="secondary" [cModalToggle]="'modalPaneles'">Cerrar</button>
   </c-modal-footer>
 </c-modal>
 
-<c-modal
-  backdrop="static"
-  id="modalImportarPaneles"
-  #modalImportarPaneles
-  size="xl"
->
+<c-modal backdrop="static"
+         id="modalImportarPaneles"
+         #modalImportarPaneles
+         size="xl">
   <c-modal-header>
     <h5 cModalTitle>Importación de Paneles</h5>
     <button [cModalToggle]="'modalImportarPaneles'" cButtonClose></button>
@@ -275,7 +262,7 @@
                                       { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
                                       { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
                                       { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
-   [registros]="_panelesImportados" idKey="idPanel"  [esEstatico]="true" ></app-registro-editor>
+                           [registros]="_panelesImportados" idKey="idPanel" [esEstatico]="true"></app-registro-editor>
       <div class="text-center mt-3">
         <button cButton color="primary" (click)="GuardarImportacionArchivoPaneles()">Guardar Paneles Importados</button>
         <button cButton color="primary" (click)="cambiarDeArchivo()">Elegir otro archivo</button>
@@ -283,19 +270,17 @@
     </div>
     <div *ngIf="!(_panelesImportados!.length > 0)">
       <app-file-upload (fileSelected)="onFileSelectedPanel($event)"></app-file-upload>
-    </div>      
+    </div>
   </c-modal-body>
   <c-modal-footer>
     <button cButton color="secondary" [cModalToggle]="'modalImportarPaneles'">Cerrar</button>
   </c-modal-footer>
 </c-modal>
 
-<c-modal
-  backdrop="static"
-  id="modalImportarInversores"
-  #modalImportarInversores
-  size="xl"
->
+<c-modal backdrop="static"
+         id="modalImportarInversores"
+         #modalImportarInversores
+         size="xl">
   <c-modal-header>
     <h5 cModalTitle>Importación de Inversores</h5>
     <button [cModalToggle]="'modalImportarInversores'" cButtonClose></button>
@@ -314,7 +299,7 @@
                                       { key:'esInicial', label:'Inicial', type: 'checkbox', mandatory: true },
                                       { key:'danado', label:'Dañado', type: 'checkbox', mandatory: true },
                                       { key:'numeroSerieReemplazo', label:'No. serie reemplazo' }]"
-   [registros]="_inversoresImportados" idKey="idInversor"  [esEstatico]="true" ></app-registro-editor>
+                           [registros]="_inversoresImportados" idKey="idInversor" [esEstatico]="true"></app-registro-editor>
       <div class="text-center mt-3">
         <button cButton color="primary" (click)="GuardarImportacionArchivoInversores()">Guardar Inversores Importados</button>
         <button cButton color="primary" (click)="cambiarDeArchivo()">Elegir otro archivo</button>
@@ -322,7 +307,7 @@
     </div>
     <div *ngIf="!(_inversoresImportados!.length > 0)">
       <app-file-upload (fileSelected)="onFileSelectedInversor($event)"></app-file-upload>
-    </div>      
+    </div>
   </c-modal-body>
   <c-modal-footer>
     <button cButton color="secondary" [cModalToggle]="'modalImportarInversores'">Cerrar</button>
