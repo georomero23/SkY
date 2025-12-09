@@ -32,11 +32,12 @@ export class ReporteAutomaticoComponent implements OnInit, OnDestroy, OnChanges 
   @Input() mostrarBT2: boolean = false;
   constructor(private cd: ChangeDetectorRef) { }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['configRA']) {
-      this.cd.detectChanges();
-    }
+  ngOnChanges(changes: SimpleChanges): void {
+  if (changes['mostrarBT2']) {
+    this.cd.detectChanges();  
   }
+}
+
 
   @Output() errorEnReporte = new EventEmitter<string>();
   @Output() datosObtenidos = new EventEmitter<{

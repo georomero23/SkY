@@ -603,11 +603,12 @@ namespace Skysense_Data.Auth.Implementation
             else
             {
                 if (config.BajaTension2 == null)
+                {
                     config.BajaTension2 = false;
                     this._SkysenseDevContext.SaveChanges();
+                }
             }
-
-            return Task.FromResult(new CReporteAutomaticoConfig
+                return Task.FromResult(new CReporteAutomaticoConfig
             {
                 IdInstalacion = config.IdInstalacion,
                 NombreEnRecibo = config.NombreEnRecibo,

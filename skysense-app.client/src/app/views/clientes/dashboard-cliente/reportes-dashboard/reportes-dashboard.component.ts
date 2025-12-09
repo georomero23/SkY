@@ -120,10 +120,8 @@ export class ReportesDashboardComponent {
           this.configRA = { ...data.data };
           this.configRA.porcentajeDapNumeros = this.configRA.porcentajeDap * 100;
           this.configRA.fpDefaultNumeros = this.configRA.fpDefault * 100;
+          this.configRA.bajaTension2 = !!data.data.bajaTension2;
 
-          //this.configRA.bajaTension2 = !!data.data.bajaTension2;
-          //this.configRA.bajaTension2 = true;
-          this.configRA.bajaTension2 = false;
 
 
         } else {
