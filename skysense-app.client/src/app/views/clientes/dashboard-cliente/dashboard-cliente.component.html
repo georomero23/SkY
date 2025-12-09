@@ -2,136 +2,108 @@
   <c-card-body>
     <div style="display: flex; justify-content: space-between;">
       <div style="display: flex;">
-        <img class="imagenCliente" appDefaultImg [src]="_Cliente?.sImagenCliente??''">
+        <img class="imagenCliente" appDefaultImg [src]="_Cliente?.sImagenCliente ?? ''">
         <div>
-          <div>
-            {{_Cliente?.cClienteInfo?.nombre??""}}
-          </div>
-          <div>
-            Email: {{_Cliente?.cClienteInfo?.correo??""}}
-          </div>
-          <div>
-            Teléfono: {{_Cliente?.cClienteInfo?.telefono??''}}
-          </div>
+          <div>{{ _Cliente?.cClienteInfo?.nombre ?? "" }}</div>
+          <div>Email: {{ _Cliente?.cClienteInfo?.correo ?? "" }}</div>
+          <div>Teléfono: {{ _Cliente?.cClienteInfo?.telefono ?? "" }}</div>
         </div>
       </div>
+
       <div class="d-float-right">
+        <div>Instalaciones ({{ _Cliente?.arrInstalaciones?.length ?? "0" }})</div>
+
         <div>
-          Instalaciones ({{_Cliente?.arrInstalaciones?.length??"0"}})
-        </div>
-        <div>
-          <select cSelect (ngModelChange)="SelectOnChange($event)" [(ngModel)]="_valorSeleccionadoInstalacion" [compareWith]="compareByOptionId">
-            <!-- <option *ngFor="let ins of _Cliente?.arrInstalaciones??[]" [value]="'/clientes/'+(_Cliente?.cClienteInfo?.idCliente??0)+'/'+ins.idInstalacion">{{ins.sNombreInstalacion}}</option> -->
-            <option *ngFor="let ins of _Cliente?.arrInstalaciones??[]" [ngValue]="ins">{{ins.sNombreInstalacion}}</option>
+          <select cSelect
+                  (ngModelChange)="SelectOnChangeById($event)"
+                  [(ngModel)]="_valorSeleccionadoInstalacionId">
+            <option *ngFor="let ins of _Cliente?.arrInstalaciones ?? []"
+                    [value]="ins.idInstalacion">
+              {{ ins.sNombreInstalacion }}
+            </option>
           </select>
         </div>
+
         <div>
-          <button cButton size="sm" color="primary" (click)="_modalNewInstVisible=true"><svg [cIcon]="iconos.cilPlus" class="me-2"></svg> Nueva Instalación</button>
+          <button cButton size="sm" color="primary" (click)="_modalNewInstVisible = true">
+            <svg [cIcon]="iconos.cilPlus" class="me-2"></svg>
+            Nueva Instalación
+          </button>
         </div>
       </div>
     </div>
+
     <c-nav variant="underline-border">
       <c-nav-item>
-        <a [routerLink]="[(instalacionId$|async) + '/Instalaciones']" routerLinkActive="active"  cNavLink>
+        <a cNavLink routerLinkActive="active"
+           [routerLink]="[_valorSeleccionadoInstalacionId, 'Instalaciones']">
           <svg [cIcon]="iconos.cilFactory" class="me-2"></svg>
-           Instalación</a>
+          Instalación
+        </a>
       </c-nav-item>
+
       <c-nav-item>
-        <a [routerLink]="[(instalacionId$|async) + '/InstalacionInfo']" routerLinkActive="active"  cNavLink>
+        <a cNavLink routerLinkActive="active"
+           [routerLink]="[_valorSeleccionadoInstalacionId, 'InstalacionInfo']">
           <svg [cIcon]="iconos.cilInfo" class="me-2"></svg>
-           Información</a>
+          Información
+        </a>
       </c-nav-item>
+
       <c-nav-item>
-        <a [routerLink]="[(instalacionId$|async) +'/Estadisticas']" routerLinkActive="active" cNavLink>
+        <a cNavLink routerLinkActive="active"
+           [routerLink]="[_valorSeleccionadoInstalacionId, 'Estadisticas']">
           <svg [cIcon]="iconos.cilChartLine" class="me-2"></svg>
-              Estadísticas</a>
+          Estadísticas
+        </a>
       </c-nav-item>
-      <c-nav-item *ngIf="_valorSeleccionadoInstalacion?.iTipoProyecto === 2 || _valorSeleccionadoInstalacion?.iTipoProyecto === 3">
-        <a [routerLink]="[(instalacionId$|async) +'/Baterias']" routerLinkActive="active" cNavLink>
+
+      <c-nav-item *ngIf="_valorSeleccionadoInstalacion?.iTipoProyecto === 2 ||
+                         _valorSeleccionadoInstalacion?.iTipoProyecto === 3">
+        <a cNavLink routerLinkActive="active"
+           [routerLink]="[_valorSeleccionadoInstalacionId, 'Baterias']">
           <svg [cIcon]="iconos.cilBatteryFull" class="me-2"></svg>
-              Baterías</a>
+          Baterías
+        </a>
       </c-nav-item>
+
       <c-nav-item>
-        <a [routerLink]="[(instalacionId$|async) +'/Reportes']" routerLinkActive="active" cNavLink>
+        <a cNavLink routerLinkActive="active"
+           [routerLink]="[_valorSeleccionadoInstalacionId, 'Reportes']">
           <svg [cIcon]="iconos.cilDescription" class="me-2"></svg>
-              Reportes</a>
+          Reportes
+        </a>
       </c-nav-item>
+
       <c-nav-item>
-        <a [routerLink]="[(instalacionId$|async) +'/Recibos']" routerLinkActive="active" cNavLink>
+        <a cNavLink routerLinkActive="active"
+           [routerLink]="[_valorSeleccionadoInstalacionId, 'Recibos']">
           <svg [cIcon]="iconos.cilBook" class="me-2"></svg>
-              Recibos</a>
+          Recibos
+        </a>
       </c-nav-item>
+
       <c-nav-item>
-        <a [routerLink]="[(instalacionId$|async) +'/Polizas']" routerLinkActive="active" cNavLink>
-          <svg [cIcon]="iconos.cilBriefcase" class="me-2"></svg>
-              Pólizas</a>
-      </c-nav-item>
-      <c-nav-item> 
-        <a [routerLink]="[(instalacionId$|async) +'/Documentos']" routerLinkActive="active" cNavLink>
+        <a cNavLink routerLinkActive="active"
+           [routerLink]="[_valorSeleccionadoInstalacionId, 'Documentos']">
           <svg [cIcon]="iconos.cilFolder" class="me-2"></svg>
-              Documentos</a>
+          Documentos
+        </a>
       </c-nav-item>
-      <!-- <c-nav-item>
-        <a [disabled]="true" [routerLink] cNavLink>Disabled</a>
-      </c-nav-item> -->
     </c-nav>
-      <!-- <c-tabs [activeItemKey]="0" >
-          <c-tabs-list variant="underline-border">
-              <a cTab [itemKey]="0" [routerLink]="[(instalacionId$|async) + '/Instalaciones']"><svg [cIcon]="iconos.cilFactory" class="me-2"></svg>
-              Instalaciones</a>
-            <button [itemKey]="1">
-              <a cTab [routerLink]="[(instalacionId$|async) +'/Estadisticas']"><svg [cIcon]="iconos.cilChartLine" class="me-2"></svg>
-              Estadísticas</a>
-            </button>
-             <button cTab [itemKey]="2" [disabled]="true">
-              <svg cIcon class="me-2" name="cilCode"></svg>
-              Historial de estatus
-            </button>
-            <button cTab [itemKey]="3" [disabled]="true">
-              <svg cIcon class="me-2" name="cilCode"></svg>
-              Historial de alarmas
-            </button>
-            <button cTab [itemKey]="4" [disabled]="true">
-              <svg cIcon class="me-2" name="cilCode"></svg>
-              Recibos
-            </button>
-            <button cTab [itemKey]="5" [disabled]="true">
-              <svg cIcon class="me-2" name="cilCode"></svg>
-              Reportes
-            </button>
-            <button cTab [itemKey]="6" [disabled]="true">
-              <svg cIcon class="me-2" name="cilCode"></svg>
-              Pólizas
-            </button> 
-          </c-tabs-list>
-         <c-tabs-content>
-            <c-tab-panel [itemKey]="0" class="p-3">
-              This is some placeholder content the <strong class="text-info">Home</strong> tab's associated content. Clicking another tab
-              will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the
-              content visibility and styling. You can use it with tabs, pills, and any other .nav-powered navigation.
-            </c-tab-panel>
-            <c-tab-panel [itemKey]="1" class="p-3">
-              This is some placeholder content the <strong class="text-success">Profile</strong> tab's associated content. Clicking another
-              tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the
-              content visibility and styling. You can use it with tabs, pills, and any other .nav-powered navigation.
-            </c-tab-panel>
-            <c-tab-panel [itemKey]="2" class="p-3">
-              This is some placeholder content the <strong class="text-warning">Contact</strong> tab's associated content. Clicking another
-              tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the
-              content visibility and styling. You can use it with tabs, pills, and any other .nav-powered navigation.
-            </c-tab-panel>
-          </c-tabs-content> 
-        </c-tabs> -->
-      </c-card-body>
+
+  </c-card-body>
 </c-card>
+
 <router-outlet></router-outlet>
 
-
-
-<c-modal [visible]="_modalNewInstVisible" size="xl" #modalNuevaInstalacion title="Nueva Instalación" [scrollable]="true" [backdrop]="'static'" [keyboard]="false" >
+<c-modal [visible]="_modalNewInstVisible" size="xl" title="Nueva Instalación"
+         [scrollable]="true" [backdrop]="'static'" [keyboard]="false">
   <c-modal-header>
     <h5 class="modal-title">Nueva Instalación</h5>
-    <button cButton type="button" class="btn-close" aria-label="Close" (click)="_modalNewInstVisible=false"></button>
+    <button cButton type="button" class="btn-close" aria-label="Close"
+            (click)="_modalNewInstVisible = false">
+    </button>
   </c-modal-header>
   <c-modal-body>
     <app-info-instalacion-form (guardar)="GuardaInfoInstalacion($event)"></app-info-instalacion-form>

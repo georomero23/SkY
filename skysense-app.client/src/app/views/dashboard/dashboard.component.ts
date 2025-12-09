@@ -30,6 +30,8 @@ interface IUser {
   color: string;
 }
 
+
+
 @Component({
     templateUrl: 'dashboard.component.html',
     styleUrls: ['dashboard.component.scss'],
@@ -45,6 +47,10 @@ export class DashboardComponent implements OnInit {
   readonly #chartsData: DashboardChartsData = inject(DashboardChartsData);
   readonly #instalacionService: InstalacionesService = inject(InstalacionesService);
   readonly #tostada: ToastService = inject(ToastService);
+
+  porcentajeEficacia: number | null = null;
+  generacionReal: number | null = null;
+  generacionGarantizada: number | null = null;
 
 
   grupos: GrupoModel[] = [];
@@ -84,6 +90,7 @@ export class DashboardComponent implements OnInit {
   public trafficRadioGroup = new FormGroup({
     trafficRadio: new FormControl('Año')
   });
+
 
   ngOnInit(): void {
     this.#instalacionService.mObtenerGrupos().subscribe({
@@ -169,6 +176,12 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
+  abrirInstalacion(inst: KPIInstalaciones) {
+    this.#instalacionService._UltimaSeleccion = inst;  // Guardamos toda la info del dashboard
+    window.location.href = `#/clientes/${inst.idCliente}/${inst.idInstalacion}`;
+  }
+
 
   CambiarChartPrincipal(dataSet: KPIInstalaciones[]):IChartProps {
     const brandSuccess = getStyle('--cui-success') ?? '#4dbd74';

@@ -16,7 +16,7 @@ type ImageSrc = string | null | undefined;
   selector: '[appDefaultImg]',
   standalone: true,
 })
-export class DefaultImgDirective implements OnChanges {
+export class DefaultImgDirective {
   @Input({ required: true }) src: ImageSrc = null;
 
   // url link to some default image
@@ -29,9 +29,9 @@ export class DefaultImgDirective implements OnChanges {
     private renderer: Renderer2
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.initImage();
-  }
+  //ngOnChanges(changes: SimpleChanges): void {
+  //  this.initImage();
+  //}
 
   private initImage() {
     // do not evaluate on SSR

@@ -125,7 +125,7 @@
         </label>
         <div>
           <c-input-group class="mb-3">
-            <input aria-label="0.00" cFormControl  id="cargoDAP" type="number" [(ngModel)]="configRA.porcentajeDapNumeros" name="cargoDAP" />
+            <input aria-label="0.00" cFormControl id="cargoDAP" type="number" [(ngModel)]="configRA.porcentajeDapNumeros" name="cargoDAP" />
             <span cInputGroupText>%</span>
           </c-input-group>
         </div>
@@ -147,11 +147,25 @@
         </label>
         <div>
           <c-input-group class="mb-3">
-            <input aria-label="0.00" cFormControl  id="fpDefault" type="number" [(ngModel)]="configRA.fpDefaultNumeros" name="fpDefault" />
+            <input aria-label="0.00" cFormControl id="fpDefault" type="number" [(ngModel)]="configRA.fpDefaultNumeros" name="fpDefault" />
             <span cInputGroupText>%</span>
           </c-input-group>
         </div>
       </div>
+
+      <div>
+        <input type="checkbox"
+               class="form-check-input"
+               [(ngModel)]="configRA.bajaTension2"
+               id="chkBT2" />
+        <label class="form-check-label"
+               for="chkBT2"
+               cTooltip="Aplicar ajuste del 2% por baja tensión"
+               tooltipPlacement="right">
+          Baja Tensión 2%
+        </label>
+      </div>
+
     </form>
   </c-modal-body>
   <c-modal-footer>
@@ -163,9 +177,12 @@
 <c-modal [visible]="isAutoReportVisible" (visibleChange)="isAutoReportVisible = $event" size="xl">
   <c-modal-header>Vista previa del reporte</c-modal-header>
   <c-modal-body style="overflow: auto; max-height: 85vh;" *ngIf="isAutoReportVisible">
-        <app-reporte-automatico (errorEnReporte)="errorEnReporteHandler($event)"
-          (datosObtenidos)="DatosReporteAutomaticoObtenidos($event)" [idInstalacion]="_idInstalacion"
-          [iAnno]="_reporteAutomaticoAnno!" [iMes]="_reporteAutomaticoMes!"></app-reporte-automatico>
+    <app-reporte-automatico [idInstalacion]="_idInstalacion"
+                            [iAnno]="_reporteAutomaticoAnno"
+                            [iMes]="_reporteAutomaticoMes"
+                            [mostrarBT2]="configRA.bajaTension2"
+                            (datosObtenidos)="DatosReporteAutomaticoObtenidos($event)">
+    </app-reporte-automatico>
   </c-modal-body>
   <c-modal-footer>
     <button cButton color="primary" *ngIf="!_guardando" (click)="exportarPDF()">Exportar PDF</button>

@@ -83,5 +83,12 @@ namespace Skysense_models.Otros
         public decimal[] HistoricoGenPVAnnioAnterior { get; set; } = [];
         public decimal?[] HistoricoConsumo { get; set; } = [];
         public decimal?[][] HistoricoFacturas { get; set; } = [];
+
+        //2%
+        public decimal BajaTension2C { get; set; }
+        public decimal BajaTension2S { get; set; }
+        public decimal BajaTension2Ahorro { get; set; }
+
+
     }
 }

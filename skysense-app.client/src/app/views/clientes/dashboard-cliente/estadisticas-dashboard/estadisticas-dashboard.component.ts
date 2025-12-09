@@ -75,20 +75,34 @@ _guardandoDatos: boolean = false;
       }
     }
 
-    ngOnInit(): void {
-      this._fechaHoyAnio = new Date().getFullYear();
-      this._fechaHoyMes = new Date().getMonth() + 1;
-      this._inicioOperacionesAnio = this.#DashboardService._Instalacion!.dtFechaInicioOperaciones.getFullYear();
-      this._inicioOperacionesMes = this.#DashboardService._Instalacion!.dtFechaInicioOperaciones.getMonth() + 1;
-      this._anios=Array.from({length: 1+(new Date().getFullYear() - this._inicioOperacionesAnio)}, (_,index)=> this._inicioOperacionesAnio + index)
-        .sort((a,b)=>a>b?a:b).map(v=> {return {value: v, label: v.toString()}});
-      this._idPlataforma = this.#DashboardService._Instalacion!.idPlataforma;
-      //if(this._idPlataforma == 5)
-        //this.AnioCambiado({target:{value: this._anios[0]}});
-      this._anioSeleccionado = this._anios[0];
-      this.AnioCambiado();
-      //this.GeneracionDiariaCambiada();
-    }
+  ngOnInit(): void {
+    this._fechaHoyAnio = new Date().getFullYear();
+    this._fechaHoyMes = new Date().getMonth() + 1;
+
+    this._inicioOperacionesAnio = this.#DashboardService._Instalacion!.dtFechaInicioOperaciones.getFullYear();
+    this._inicioOperacionesMes = this.#DashboardService._Instalacion!.dtFechaInicioOperaciones.getMonth() + 1;
+
+    this._anios = Array.from(
+      { length: 1 + (this._fechaHoyAnio - this._inicioOperacionesAnio) },
+      (_, index) => this._inicioOperacionesAnio + index
+    )
+      .map(v => ({ value: v, label: v.toString() }))
+      .sort((a, b) => a.value - b.value);
+
+    this._idPlataforma = this.#DashboardService._Instalacion!.idPlataforma;
+
+    this._anioSeleccionado = this._anios[this._anios.length - 1];
+
+    this._anioSeleccionado2 = this._anioSeleccionado;
+
+    this._mesSeleccionado = this._fechaHoyMes;
+
+    this.AnioCambiado();
+
+    this.GeneracionDiariaCambiada(); 
+  }
+
+
     
     AnioCambiado(){
       this._cargandoDatos = 1; //3;

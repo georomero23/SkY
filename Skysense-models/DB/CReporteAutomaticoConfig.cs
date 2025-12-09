@@ -14,4 +14,7 @@ public class CReporteAutomaticoConfig
     public decimal? UmbralFp { get; set; }
 
     public decimal? FpDefault { get; set; }
+
+    public bool? BajaTension2 { get; set; }
+
 }

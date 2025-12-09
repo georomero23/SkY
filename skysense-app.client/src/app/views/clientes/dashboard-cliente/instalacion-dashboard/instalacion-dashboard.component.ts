@@ -35,6 +35,10 @@ import { FileUploadComponent } from "src/app/components/cargaArchivos/file-uploa
   styleUrl: './instalacion-dashboard.component.scss'
 })
 export class InstalacionDashboardComponent implements OnInit, OnDestroy {
+  porcentajeEficacia: number | null = null;
+  generacionReal: number | null = null;
+  generacionGarantizada: number | null = null;
+
   _cargaDeDatosInstalacionTerminada: boolean = true;
   #cliente = inject(ClientesService);
   #instalaciones = inject(InstalacionesService);
@@ -56,7 +60,10 @@ _potenciaPaneles: number = 0;
 
 _inversores: InversorModel[] = [];
 _inversoresImportados: InversorModel[] = [];
-_inversorInsertar: InversorModel | null = new InversorModel();
+  _inversorInsertar: InversorModel | null = new InversorModel();
+
+  estatusColor: string = 'light';
+  estatusTexto: string = '';
 
   constructor(){
     this.instalacionId$ = this.#routeService.parent!.params.pipe(map((p)=>p['idInstalacion']));
@@ -66,6 +73,7 @@ _inversorInsertar: InversorModel | null = new InversorModel();
   }
 
   ngOnInit(){
+
     this.instalacionId$S = this.instalacionId$.subscribe({
       next: i=> {
         this.nuevaSeleccionInstalacion(i);
@@ -75,32 +83,52 @@ _inversorInsertar: InversorModel | null = new InversorModel();
     });
   }
 
-  nuevaSeleccionInstalacion(idInstalacion:number){
+
+  nuevaSeleccionInstalacion(idInstalacion: number) {
     this._cargaDeDatosInstalacionTerminada = false;
-    this.#cliente.mObtenerInstalacionDelCliente(this.#routeService.parent!.parent!.snapshot.params['idCliente'] , idInstalacion).subscribe({
-        next: (next)=>{ 
-          if(next != null){
-            next.dtFechaInicioOperaciones = new Date(next.dtFechaInicioOperaciones);
-            //console.log(next.dtFechaInicioOperaciones)
+
+    this.#cliente
+      .mObtenerInstalacionDelCliente(
+        this.#routeService.parent!.parent!.snapshot.params['idCliente'],
+        idInstalacion
+      )
+      .subscribe({
+        next: (next) => {
+          if (next != null) {
+            next.dtFechaInicioOperaciones = new Date(
+              next.dtFechaInicioOperaciones
+            );
+
+            const previo = this.#instalaciones._UltimaSeleccion;
+
+            this.generacionReal = previo?.generacionReal ?? null;
+            this.generacionGarantizada = previo?.generacionGarantizada ?? null;
+            this.porcentajeEficacia = previo?.porcentaje ?? null;
+
+
             this.#DashboardService._Instalacion = next;
             this._Instalacion = next;
+
             this.ObtenPaneles();
             this.ObtenerInversores();
-          }else{
-            
+
+            this.calcularPorcentaje();
+            this.calcularEstatus();
           }
         },
-        error: (error)=>{
+        error: (error) => {
           console.log(error);
           this._cargaDeDatosInstalacionTerminada = true;
           this.#DashboardService._Instalacion = undefined;
         },
-        complete: ()=> {
+        complete: () => {
           this._cargaDeDatosInstalacionTerminada = true;
-        }
-    }
-    );
+        },
+      });
   }
+
+
+
 
   ObtenerInversores(){
     this.#InversoresService.mObtenerInversores(this.#DashboardService._Instalacion?.idInstalacion).subscribe({
@@ -378,5 +406,41 @@ this._guardandoDatos = true;
     this._panelesImportados.length = 0;
     this._inversoresImportados.length = 0;
   }
+
+  calcularPorcentaje() {
+    const real = this.generacionReal;
+    const garantizada = this.generacionGarantizada;
+
+    if (real == null || garantizada == null || garantizada === 0) {
+      this.porcentajeEficacia = 0;
+      return;
+    }
+
+    this.porcentajeEficacia = (real / garantizada) * 100;
+  }
+
+
+  calcularEstatus() {
+    const p = this.porcentajeEficacia ?? 0;
+
+    if (p === 0) {
+      this.estatusColor = 'secondary';
+      this.estatusTexto = 'Datos insuficientes';
+      return;
+    }
+
+    if (p >= 90) {
+      this.estatusColor = 'success';
+      this.estatusTexto = 'Buena generación';
+    } else if (p >= 75) {
+      this.estatusColor = 'warning';
+      this.estatusTexto = 'Generación regular';
+    } else {
+      this.estatusColor = 'danger';
+      this.estatusTexto = 'Necesita atención';
+    }
+  }
+
+
 }
 

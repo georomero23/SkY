@@ -1,5 +1,5 @@
 export class ReporteAutomaticoDatosModel{
-    idInstalacion:number = 0;
+        idInstalacion:number = 0;
         iAnno :number = 0;
         iMes :number = 0;
         cliente :string = "";
@@ -73,7 +73,17 @@ export class ReporteAutomaticoDatosModel{
         historicoGenPVEsteAnnio :number[] = [];
         historicoGenPVAnnioAnterior :number[] = [];
         historicoConsumo :number[] = [];
-        historicoFacturas :number[][] = [];
+        historicoFacturas: number[][] = [];
+
+  bajaTension2C: number = 0;
+  bajaTension2S: number = 0;
+  bajaTension2Ahorro: number = 0;
+
+  constructor(init?: Partial<ReporteAutomaticoConfig>)
+ {
+    Object.assign(this, init);
+  }
+
 }
 
 export class ReporteAutomaticoConfig{
@@ -87,5 +97,15 @@ export class ReporteAutomaticoConfig{
     umbralFp:number  = 0.00;
 
     fpDefault:number = 0.90;
-    fpDefaultNumeros:number = 0.90;
+  fpDefaultNumeros: number = 0.90;
+
+  bajaTension2: boolean = false;
+
+  constructor(init?: Partial<ReporteAutomaticoConfig>) {
+    if (init) {
+      Object.assign(this, init);
+      this.bajaTension2 = !!init.bajaTension2;
+    }
+  }
+
 }

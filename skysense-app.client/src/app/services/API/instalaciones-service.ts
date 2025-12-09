@@ -14,6 +14,8 @@ import { ReporteAutomaticoConfig, ReporteAutomaticoDatosModel } from '@models/re
 })
 export class InstalacionesService {
 
+  _UltimaSeleccion: KPIInstalaciones | null = null;
+
   controllerName:string = "Instalaciones"
   baseURL:string;
 

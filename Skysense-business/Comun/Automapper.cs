@@ -32,6 +32,9 @@ namespace Skysense_business.Comun
             CreateMap<Skysense_persistencia.Entidades.TarifasDivisione, CTarifasDivisione>();
             CreateMap<Skysense_persistencia.Entidades.ReporteAutomaticoConfig, CReporteAutomaticoConfig>();
 
+            CreateMap<CReporteAutomaticoConfig, Skysense_persistencia.Entidades.ReporteAutomaticoConfig>();
+
+
         }
     }
 }

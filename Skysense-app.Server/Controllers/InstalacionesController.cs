@@ -744,7 +744,8 @@ namespace Skysense_app.Server.Controllers
 
         [HttpPost, Route("GuardaReporteAutomatico/{idInstalacion}")]
         public async Task<ActionResult<ApiRespuesta<bool>>> SubeReporteAutomatico([FromRoute] int idInstalacion, [FromForm] string archivo, [FromForm] string Fecha, 
-            [FromForm] decimal panelGeneracion, [FromForm] decimal ahorroAcumulado, [FromForm] decimal ahorroAmbiental, [FromForm] decimal consumoCFE)
+        
+        [FromForm] decimal panelGeneracion, [FromForm] decimal ahorroAcumulado, [FromForm] decimal ahorroAmbiental, [FromForm] decimal consumoCFE)
         {
             try
             {
@@ -756,7 +757,13 @@ namespace Skysense_app.Server.Controllers
                     ContentType = "application/pdf"
                 };
 
-                await _instalacionesLogic.mSubeReporteAutomatico(idInstalacion, archivoFormFile, DateOnly.Parse(Fecha), panelGeneracion, ahorroAcumulado, ahorroAmbiental, consumoCFE);
+                bool bajaTension2 = false;
+                if (Request.Form.ContainsKey("bajaTension2"))
+                {
+                    bool.TryParse(Request.Form["bajaTension2"], out bajaTension2);
+                }
+
+                await _instalacionesLogic.mSubeReporteAutomatico(idInstalacion, archivoFormFile, DateOnly.Parse(Fecha), panelGeneracion, ahorroAcumulado, ahorroAmbiental, consumoCFE, bajaTension2);
                 return Ok(new ApiRespuesta<bool>()
                 {
                     data = true,

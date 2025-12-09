@@ -18,7 +18,6 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ReporteAutomaticoConfig } from '@models/reporteAutomatico-model';
 
-
 @Component({
   selector: 'app-reportes-dashboard',
   imports: [PaginationComponent, PageItemDirective, PageLinkDirective, CardComponent, SpinnerComponent, CardBodyComponent,
@@ -28,9 +27,10 @@ import { ReporteAutomaticoConfig } from '@models/reporteAutomatico-model';
   styleUrl: './reportes-dashboard.component.scss'
 })
 export class ReportesDashboardComponent {
+
   muestraConfig: boolean = false;
 
-  tipoArchivo = 1; // 1 = reportes; 2 = recibos
+  tipoArchivo = 1;
 
   iconos = iconSubset;
 
@@ -53,7 +53,8 @@ export class ReportesDashboardComponent {
   previewType: 'pdf' | 'image' | 'other' = 'other';
   #sanitizer: DomSanitizer = inject(DomSanitizer);
 
-  accion = 0; // 0 = Ninguna, 1 = Cargar, 2 = Borrar, 3 = Descargar
+  accion = 0;
+
   listaAnios: number[] = [];
 
   _reporteModificado: ReporteMensual | null = null;
@@ -63,11 +64,19 @@ export class ReportesDashboardComponent {
 
   _guardando: boolean = false;
 
-  _reporteAutomaticoMes: number | undefined;
-  _reporteAutomaticoAnno: number | undefined;
-  private _datosReporteAuto: { panelesGeneracion: number; ahorroAcumulado: number; ahorroAmbiental: number; consumoCFE: number; } | undefined;
+  _reporteAutomaticoMes: number | null = null;
+  _reporteAutomaticoAnno: number | null = null;
 
-  configRA: ReporteAutomaticoConfig = new ReporteAutomaticoConfig();
+  private _datosReporteAuto: {
+    panelesGeneracion: number;
+    ahorroAcumulado: number;
+    ahorroAmbiental: number;
+    consumoCFE: number;
+  } | undefined;
+
+  configRA: ReporteAutomaticoConfig = {
+    bajaTension2: false
+  } as ReporteAutomaticoConfig;
 
   constructor() {
     if (this.#DashboardService._Instalacion == undefined) {
@@ -78,15 +87,15 @@ export class ReportesDashboardComponent {
   ngOnInit() {
     this.obtenReportes();
     this.obtenConfiguracionReportesAutomaticos();
-    this._anioSeleccionado = 2025
-    // Por ejemplo, últimos 5 años
+    this._anioSeleccionado = 2025;
+
     const actual = new Date().getFullYear();
     this.listaAnios = Array.from({ length: 5 }, (_, i) => actual - i);
   }
 
   obtenReportes() {
     this._idInstalacion = this.#DashboardService._Instalacion!.idInstalacion;
-    this.#instalacionService.mObtenerReportes(this.#DashboardService._Instalacion!.idInstalacion, this._anioSeleccionado).subscribe({
+    this.#instalacionService.mObtenerReportes(this._idInstalacion, this._anioSeleccionado).subscribe({
       next: (data) => {
         if (data.exito) {
           this._reportesAnuales = data.data;
@@ -97,34 +106,41 @@ export class ReportesDashboardComponent {
           this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener reportes", data.mensaje, 5, NivelAlerta.Advertencia));
         }
       },
-      error: (err) => {
+      error: () => {
         this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener reportes", "Ocurrió un error inesperado al obtener los reportes.", 5, NivelAlerta.Peligro));
       }
     });
   }
 
-  obtenConfiguracionReportesAutomaticos(){
+  obtenConfiguracionReportesAutomaticos() {
     this.#instalacionService.mObtenConfigReporteAutomatico(this.#DashboardService._Instalacion!.idInstalacion).subscribe({
       next: (data) => {
         if (data.exito) {
-          this.configRA = data.data;
-          this.configRA.porcentajeDapNumeros = this.configRA.porcentajeDap*100;
-          this.configRA.fpDefaultNumeros = this.configRA.fpDefault*100;
+
+          this.configRA = { ...data.data };
+          this.configRA.porcentajeDapNumeros = this.configRA.porcentajeDap * 100;
+          this.configRA.fpDefaultNumeros = this.configRA.fpDefault * 100;
+
+          //this.configRA.bajaTension2 = !!data.data.bajaTension2;
+          //this.configRA.bajaTension2 = true;
+          this.configRA.bajaTension2 = false;
+
+
         } else {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener configuración de reportes automáticos", data.mensaje, 5, NivelAlerta.Advertencia));
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener configuración", data.mensaje, 5, NivelAlerta.Advertencia));
         }
       },
-      error: (err) => {
-        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener configuración de reportes automáticos", "Ocurrió un error inesperado al obtener la configuración.", 5, NivelAlerta.Peligro));
-        console.log(err);
+      error: () => {
+        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro));
       }
     });
   }
 
   cargarReportes(file: File) {
+
     const Documento = {
       idInstalacion: this.#DashboardService._Instalacion!.idInstalacion,
-      tipoDocumento: this.tipoArchivo, // Reporte
+      tipoDocumento: this.tipoArchivo,
       nombreDocumento: file.name,
       tipoArchivo: file.type,
       tamano: file.size
@@ -135,23 +151,23 @@ export class ReportesDashboardComponent {
     formData.append("archivo", file);
     formData.append("iAnno", this._subiendoMes?.toISOString()?.split('T')[0] ?? "null");
 
-    this.accion = 1; // Cargando
+    this.accion = 1;
     this.#instalacionService.mModificaDocumento(formData).subscribe({
       next: (data) => {
-        if (data.exito !== true) {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al cargar el reporte", data.mensaje, 5, NivelAlerta.Advertencia));
+        if (!data.exito) {
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al cargar reporte", data.mensaje, 5, NivelAlerta.Advertencia));
         } else {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte cargado", "El reporte se cargó correctamente.", 5, NivelAlerta.Exito));
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte cargado", "Cargado correctamente.", 5, NivelAlerta.Exito));
           this.obtenReportes();
         }
       },
-      error: (err) => {
-        this.accion = 0; // Nada
+      error: () => {
+        this.accion = 0;
         this.isModalVisible = false;
-        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al cargar el reporte", "Ocurrió un error inesperado al cargar el reporte.", 5, NivelAlerta.Peligro));
+        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro));
       },
       complete: () => {
-        this.accion = 0; // Nada
+        this.accion = 0;
         this.isModalVisible = false;
       }
     });
@@ -160,17 +176,16 @@ export class ReportesDashboardComponent {
   borrarReporte(_t21: Documento) {
     this.#instalacionService.mEliminaDocumento(_t21.idInstalacion, _t21.idDocumento!).subscribe({
       next: (data) => {
-        if (data.exito !== true) {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al eliminar el reporte", data.mensaje, 5, NivelAlerta.Advertencia));
+        if (!data.exito) {
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al eliminar", data.mensaje, 5, NivelAlerta.Advertencia));
         } else {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte eliminado", "El reporte se eliminó correctamente.", 5, NivelAlerta.Exito));
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte eliminado", "Se eliminó correctamente.", 5, NivelAlerta.Exito));
           this.obtenReportes();
         }
       },
-      error: (err) => {
-        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al eliminar el reporte", "Ocurrió un error inesperado al eliminar el reporte.", 5, NivelAlerta.Peligro));
-      },
-      complete: () => { }
+      error: () => {
+        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro));
+      }
     });
   }
 
@@ -179,19 +194,20 @@ export class ReportesDashboardComponent {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = _t21.nombreDocumento; // Usa el nombre original del reporte
+      a.download = _t21.nombreDocumento;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
     });
   }
 
   visualizarReporte(reporte: Documento) {
     this.#instalacionService.descargarDocumento(reporte.idInstalacion, reporte.idDocumento!).subscribe(blob => {
       const fileType = reporte.tipoArchivo;
-      this.previewType = fileType.includes('pdf') ? 'pdf'
-        : fileType.includes('image') ? 'image'
+      this.previewType = fileType.includes('pdf')
+        ? 'pdf'
+        : fileType.includes('image')
+          ? 'image'
           : 'other';
       const url = URL.createObjectURL(blob);
       this.previewUrl = this.#sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -207,85 +223,84 @@ export class ReportesDashboardComponent {
     this.#instalacionService.mModificaInfoReporte(this._reporteModificado!).subscribe({
       next: (data) => {
         if (data.exito) {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte modificado", "El reporte se modificó correctamente.", 5, NivelAlerta.Exito));
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte modificado", "Guardado.", 5, NivelAlerta.Exito));
           this._reporteModificado = null;
           this.obtenReportes();
         } else {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al modificar el reporte", data.mensaje, 5, NivelAlerta.Advertencia));
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", data.mensaje, 5, NivelAlerta.Advertencia));
         }
       },
-      error: (err) => {
-        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al modificar el reporte", "Ocurrió un error inesperado al modificar el reporte.", 5, NivelAlerta.Peligro));
+      error: () => {
+        this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro));
       }
     });
   }
 
   generarReporteAutomatico(arg0: Date) {
-    //Se muestra el modal, se insertan los datos necesarios para el reporte automatico en variables para el componente
     this._guardando = true;
+
     this._reporteAutomaticoMes = arg0.getMonth() + 1;
-    this._reporteAutomaticoAnno = arg0.getFullYear();
+    this._reporteAutomaticoAnno = arg0.getFullYear(); 
     this.isAutoReportVisible = true;
 
-    //Si es enero, tomamos el reporte de Diciembre del año pasado para los sugeridos de DAP y Umbral FP
-    if(arg0.getMonth() == 0){
-      this._idInstalacion = this.#DashboardService._Instalacion!.idInstalacion;
-      this.#instalacionService.mObtenerReportes(this.#DashboardService._Instalacion!.idInstalacion, this._anioSeleccionado-1).subscribe({
+    if (arg0.getMonth() == 0) {
+      this.#instalacionService.mObtenerReportes(this.#DashboardService._Instalacion!.idInstalacion, this._anioSeleccionado - 1).subscribe({
         next: (data) => {
           if (data.exito) {
             data.data.forEach(reporte => {
               reporte.mesReporte = new Date(reporte.mesReporte.toString().replace(/-/g, '/'));
             });
           } else {
-            this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener reportes", data.mensaje, 5, NivelAlerta.Advertencia));
+            this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", data.mensaje, 5, NivelAlerta.Advertencia));
             this.isAutoReportVisible = false;
           }
         },
-        error: (err) => {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener reportes", "Ocurrió un error inesperado al obtener los reportes.", 5, NivelAlerta.Peligro));
+        error: () => {
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro));
           this.isAutoReportVisible = false;
         }
       });
     }
   }
 
-
   errorEnReporteHandler($event: string) {
-    this.#tostadaService.GeneraAlertaToast(new ToastModel("Error en reporte automático", $event, 10, NivelAlerta.Peligro));
+    this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", $event, 10, NivelAlerta.Peligro));
     this.isAutoReportVisible = false;
-    this._reporteAutomaticoAnno = undefined;
-    this._reporteAutomaticoMes = undefined;
+    this._reporteAutomaticoAnno = null;
+    this._reporteAutomaticoMes = null;
   }
 
   exportarPDF() {
 
     this._guardando = true;
 
-    const elemento = document.querySelector('.reporte-automatico') as HTMLElement;
+    const elementos = document.querySelectorAll('.reporte-automatico');
+    const elemento = elementos[elementos.length - 1] as HTMLElement;
+
     if (!elemento) return;
 
     html2canvas(elemento, { scale: 2 }).then(canvas => {
+
       const imgData = canvas.toDataURL('image/jpg');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
 
-      // Ajusta el tamaño de la imagen al ancho de la página
       const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pageWidth;
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, 'alias', 'FAST');
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
 
-      const nombreReporte = 'Reporte_' + (this._reporteAutomaticoMes?.toString().padStart(2, '0') ?? '00') + '-' + (this._reporteAutomaticoAnno ?? '0000') + '.pdf';
-      // Guarda localmente
+      const nombreReporte = 'Reporte_' + (this._reporteAutomaticoMes?.toString().padStart(2, '0') ?? '00')
+        + '-' + (this._reporteAutomaticoAnno ?? '0000') + '.pdf';
+
       pdf.save(nombreReporte);
 
-      // Envía al servidor como base64
       const pdfBase64 = pdf.output('datauristring').split(',')[1];
+
       const Documento = {
         idInstalacion: this.#DashboardService._Instalacion!.idInstalacion,
-        tipoDocumento: this.tipoArchivo, // Reporte
+        tipoDocumento: this.tipoArchivo,
         nombreDocumento: nombreReporte,
         tipoArchivo: 'pdf'
       };
@@ -293,63 +308,88 @@ export class ReportesDashboardComponent {
       var formData = new FormData();
       formData.append("documentoJSON", JSON.stringify(Documento));
       formData.append("archivo", pdfBase64);
-      formData.append("Fecha", (this._reporteAutomaticoAnno?.toString() ?? "null") + "-" + (this._reporteAutomaticoMes?.toString()?.padStart(2, '0')??0) + "-01");
+      formData.append("Fecha", `${this._reporteAutomaticoAnno}-${(this._reporteAutomaticoMes ?? 0).toString().padStart(2, '0')}-01`);
       formData.append("panelGeneracion", this._datosReporteAuto?.panelesGeneracion?.toString() ?? "null");
       formData.append("ahorroAcumulado", this._datosReporteAuto?.ahorroAcumulado?.toString() ?? "null");
       formData.append("ahorroAmbiental", this._datosReporteAuto?.ahorroAmbiental?.toString() ?? "null");
       formData.append("consumoCFE", this._datosReporteAuto?.consumoCFE?.toString() ?? "null");
 
-
+      formData.append("bajaTension2", this.configRA.bajaTension2 ? "true" : "false");
 
       this.#instalacionService.mGuardaReporteAutomatico(formData, this._idInstalacion).subscribe({
         next: (data) => {
-          if (data.exito !== true) {
-            this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al cargar el reporte", data.mensaje, 5, NivelAlerta.Advertencia));
+          if (!data.exito) {
+            this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", data.mensaje, 5, NivelAlerta.Advertencia));
           } else {
-            this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte cargado", "El reporte se cargó correctamente.", 5, NivelAlerta.Exito));
+            this.#tostadaService.GeneraAlertaToast(new ToastModel("Reporte cargado", "Correctamente.", 5, NivelAlerta.Exito));
             this.isAutoReportVisible = false;
             this.obtenReportes();
           }
         },
-        error: (err) => {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al cargar el reporte", "Ocurrió un error inesperado al cargar el reporte.", 5, NivelAlerta.Peligro));
+        error: () => {
+          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro));
           this._guardando = false;
         },
-        complete: ()=>{
+        complete: () => {
           this._guardando = false;
-
         }
       });
-    }, );
+
+    });
+
   }
 
-  DatosReporteAutomaticoObtenidos($event: { panelesGeneracion: number; ahorroAcumulado: number; ahorroAmbiental: number; consumoCFE: number; }) {
-    this._datosReporteAuto = {...$event};
+  DatosReporteAutomaticoObtenidos($event: {
+    panelesGeneracion: number;
+    ahorroAcumulado: number;
+    ahorroAmbiental: number;
+    consumoCFE: number;
+  }) {
+    this._datosReporteAuto = { ...$event };
     this._guardando = false;
   }
 
   GuardaConfiguracionRA() {
-    const nuevaConfig = {...this.configRA};
-    nuevaConfig.porcentajeDap = nuevaConfig.porcentajeDapNumeros / 100;
-    nuevaConfig.fpDefault = nuevaConfig.fpDefaultNumeros / 100;
 
-    this.#instalacionService.mGuardaConfiguracionReporteAutomatico(this._idInstalacion, nuevaConfig).subscribe({
+    const nuevaConfig = new ReporteAutomaticoConfig();
+
+    nuevaConfig.idInstalacion = this.configRA.idInstalacion;
+    nuevaConfig.nombreEnRecibo = this.configRA.nombreEnRecibo;
+    nuevaConfig.porcentajeDap = this.configRA.porcentajeDapNumeros / 100;
+    nuevaConfig.umbralFp = this.configRA.umbralFp;
+    nuevaConfig.fpDefault = this.configRA.fpDefaultNumeros / 100;
+    nuevaConfig.bajaTension2 = this.configRA.bajaTension2;
+
+
+    this.#instalacionService.mGuardaConfiguracionReporteAutomatico(this._idInstalacion, nuevaConfig)
+      .subscribe({
         next: (data) => {
-          if (data.exito !== true) {
-            this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al guardar la configuración", data.mensaje, 5, NivelAlerta.Advertencia));
+          if (!data.exito) {
+
+            this.#tostadaService.GeneraAlertaToast(
+              new ToastModel("Error", data.mensaje, 5, NivelAlerta.Advertencia)
+            );
+
           } else {
-            this.#tostadaService.GeneraAlertaToast(new ToastModel("Éxito", "La configuración fue guardada correctamente.", 5, NivelAlerta.Exito));
+
+            this.#tostadaService.GeneraAlertaToast(
+              new ToastModel("Éxito", "Configuración guardada.", 5, NivelAlerta.Exito)
+            );
+
             this.muestraConfig = false;
-            this.configRA = nuevaConfig;
+
+            this.obtenConfiguracionReportesAutomaticos();
+
           }
         },
-        error: (err) => {
-          this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al guardar", "Ocurrió un error inesperado al guardar la configuración.", 5, NivelAlerta.Peligro));
+        error: () => {
+          this.#tostadaService.GeneraAlertaToast(
+            new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro)
+          );
           this._guardando = false;
         },
-        complete: ()=>{
+        complete: () => {
           this._guardando = false;
-
         }
       });
   }

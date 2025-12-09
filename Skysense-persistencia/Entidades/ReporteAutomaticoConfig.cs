@@ -18,4 +18,7 @@ public partial class ReporteAutomaticoConfig
     public decimal? FpDefault { get; set; }
 
     public virtual Instalacione IdInstalacionNavigation { get; set; }
+
+    public bool? BajaTension2 { get; set; }
+
 }

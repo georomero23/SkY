@@ -582,40 +582,67 @@ namespace Skysense_Data.Auth.Implementation
 
         public Task<CReporteAutomaticoConfig> mObtenConfiguracionReportesAutomaticos(int idInstalacion)
         {
-            var config = this._SkysenseDevContext.ReporteAutomaticoConfigs.FirstOrDefault(r => r.IdInstalacion == idInstalacion);
+            var config = this._SkysenseDevContext.ReporteAutomaticoConfigs
+                .FirstOrDefault(r => r.IdInstalacion == idInstalacion);
+
             if (config == null)
             {
-                config = new Skysense_persistencia.Entidades.ReporteAutomaticoConfig()
+                config = new ReporteAutomaticoConfig()
                 {
                     IdInstalacion = idInstalacion,
                     NombreEnRecibo = this._SkysenseDevContext.Instalaciones.Find(idInstalacion)?.Nombre ?? "",
                     PorcentajeDap = 0.00m,
                     UmbralFp = 0.90m,
+                    FpDefault = 0.95m,
+                    BajaTension2 = false
                 };
+
                 this._SkysenseDevContext.ReporteAutomaticoConfigs.Add(config);
                 this._SkysenseDevContext.SaveChanges();
             }
-            return Task.FromResult(this._mapper.Map<CReporteAutomaticoConfig>(config));
+            else
+            {
+                if (config.BajaTension2 == null)
+                    config.BajaTension2 = false;
+                    this._SkysenseDevContext.SaveChanges();
+            }
+
+            return Task.FromResult(new CReporteAutomaticoConfig
+            {
+                IdInstalacion = config.IdInstalacion,
+                NombreEnRecibo = config.NombreEnRecibo,
+                PorcentajeDap = config.PorcentajeDap,
+                UmbralFp = config.UmbralFp,
+                FpDefault = config.FpDefault,
+                BajaTension2 = config.BajaTension2 ?? false
+            });
+
         }
 
         public async Task<bool> mGuardaConfiguracionReportesAutomaticos(int idInstalacion, CReporteAutomaticoConfig config)
         {
-            var dbConfig = this._SkysenseDevContext.ReporteAutomaticoConfigs.FirstOrDefault(r => r.IdInstalacion == idInstalacion);
+            var dbConfig = this._SkysenseDevContext.ReporteAutomaticoConfigs
+                .FirstOrDefault(r => r.IdInstalacion == idInstalacion);
+
             if (dbConfig == null)
             {
                 dbConfig = new Skysense_persistencia.Entidades.ReporteAutomaticoConfig()
                 {
-                    IdInstalacion = idInstalacion,
+                    IdInstalacion = idInstalacion
                 };
+
                 this._SkysenseDevContext.ReporteAutomaticoConfigs.Add(dbConfig);
             }
+
             dbConfig.NombreEnRecibo = config.NombreEnRecibo;
             dbConfig.PorcentajeDap = config.PorcentajeDap;
             dbConfig.UmbralFp = config.UmbralFp;
             dbConfig.FpDefault = config.FpDefault;
+
+            dbConfig.BajaTension2 = config.BajaTension2;
+
             return (await this._SkysenseDevContext.SaveChangesAsync()) > 0;
         }
-
 
         public CDocumento[] mObtenDocumentosTipo(int idInstalacion, int[] tipos)
         {

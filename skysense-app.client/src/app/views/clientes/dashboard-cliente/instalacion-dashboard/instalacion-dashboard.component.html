@@ -119,18 +119,18 @@
         <div style="overflow: auto;">
           <table cTable>
             <thead>
-            <tr>
-              <th scope="col">Marca del Inversor</th>
-              <th scope="col">Potencia a la salida del inversor por inversor</th>
-              <th scope="col">Número de serie</th>
-            </tr>
+              <tr>
+                <th scope="col">Marca del Inversor</th>
+                <th scope="col">Potencia a la salida del inversor por inversor</th>
+                <th scope="col">Número de serie</th>
+              </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let inversor of _inversores">
-              <td>{{inversor.marca}}</td>
-              <td>{{inversor.potencia}}</td>
-              <td>{{inversor.numeroSerie}}</td>
-            </tr>
+              <tr *ngFor="let inversor of _inversores">
+                <td>{{inversor.marca}}</td>
+                <td>{{inversor.potencia}}</td>
+                <td>{{inversor.numeroSerie}}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -138,20 +138,25 @@
     </c-card>
   </c-col>
   <c-col [xs]="2">
-    <c-card class="cards alineense" color="success" textColor="white">
+    <c-card class="cards alineense"
+            [color]="estatusColor"
+            [textColor]="estatusColor === 'secondary' ? 'dark' : 'white'">
       <c-card-body>
         <div>
           <svg [cIcon]="iconos.cilFlagAlt" size="xl" width="32"></svg>
         </div>
-        <div>
-          Buena Generación
+
+        <div class="fw-semibold">
+          {{ estatusTexto }}
         </div>
-        <div>
-          Estatus
+
+        <div class="fs-4 fw-bold">
+          {{ (porcentajeEficacia ?? 0) | number:'1.0-2' }}%
         </div>
       </c-card-body>
     </c-card>
   </c-col>
+
   <c-col [xs]="2">
     <c-card class="cards alineense">
       <c-card-body>

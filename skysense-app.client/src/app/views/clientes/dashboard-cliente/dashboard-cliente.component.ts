@@ -1,17 +1,29 @@
-import { Component, inject, NgModule, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { ButtonDirective, ButtonGroupComponent, CardBodyComponent, CardComponent, ColComponent, ModalModule, NavComponent, NavItemComponent, NavLinkDirective, RowComponent, TabDirective, TabsComponent, TabsListComponent, TemplateIdDirective, WidgetStatFComponent } from '@coreui/angular';
-import { filter, map, Observable, of } from 'rxjs';
+import { Component, inject, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  CardBodyComponent,
+  CardComponent,
+  ColComponent,
+  ModalModule,
+  NavComponent,
+  NavItemComponent,
+  NavLinkDirective,
+  RowComponent,
+  TabDirective,
+  TabsListComponent,
+  TemplateIdDirective
+} from '@coreui/angular';
+
+import { map, Observable, of } from 'rxjs';
 import { ClienteDashboard, InstalacionOpcion } from '@models/dashboard-models';
 import { ClientesService } from '@services/API/clientes-serivce';
 import { DefaultImgDirective } from '../../../directives/DefaultImg.directive';
-import { InstalacionDashboard } from '@models/dashboard-models';
 import { PotenciaRedondeoPipe } from '../../../pipes/potencia-redondeo.pipe';
 import { IconComponent, IconDirective } from '@coreui/icons-angular';
 import { TablesComponent } from '../../base/tables/tables.component';
 import { AsyncPipe, CommonModule, NgFor } from '@angular/common';
 import { iconSubset } from '../../../icons/icon-subset';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { DashboardService } from '@services/InformacionEntrePantallas/dashboard.service';
 import { InfoInstalacionFormComponent } from '../../shared/info-instalacion-form/info-instalacion-form.component';
 import { InstalacionModel } from '@models/instalacion-model';
@@ -21,105 +33,143 @@ import { ClienteModel } from '@models/cliente-model';
 
 @Component({
   selector: 'app-dashboard-cliente',
-  imports: [CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonGroupComponent,
-    DefaultImgDirective, PotenciaRedondeoPipe, IconComponent, IconDirective, CommonModule,
-    TablesComponent, TabDirective, NavComponent, NavLinkDirective, NavItemComponent, TabsListComponent, NgFor, TemplateIdDirective,
-    RouterOutlet, RouterLink, AsyncPipe, RouterLinkActive, FormsModule, ModalModule, ButtonDirective, InfoInstalacionFormComponent],
+  standalone: true,
+  imports: [
+    CardComponent, CardBodyComponent, RowComponent, ColComponent,
+    DefaultImgDirective, PotenciaRedondeoPipe, IconComponent,
+    IconDirective, CommonModule, TablesComponent, TabDirective,
+    NavComponent, NavLinkDirective, NavItemComponent, TabsListComponent,
+    NgFor, TemplateIdDirective, AsyncPipe, FormsModule, ModalModule,
+    InfoInstalacionFormComponent,
+
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet
+  ],
   templateUrl: './dashboard-cliente.component.html',
-  styleUrl: './dashboard-cliente.component.scss'
+  styleUrls: ['./dashboard-cliente.component.scss']
 })
 export class DashboardClienteComponent implements OnInit, OnDestroy {
+
   iconos = iconSubset;
-  public imagenCliente$: Observable<any>;
-  private imagenClienteRuta:string = 'assets/images/c/'
+  imagenCliente$: Observable<any>;
+  private imagenClienteRuta = 'assets/images/c/';
+
   #cliente = inject(ClientesService);
   #routeService = inject(ActivatedRoute);
   #routerService = inject(Router);
   #dashboardService = inject(DashboardService);
   #instalacionService = inject(InstalacionesService);
   #tostadaService = inject(ToastService);
-  private clienteId$;
+  #cdr = inject(ChangeDetectorRef);
+
+  clienteId$;
   instalacionId$;
-  _Cliente: ClienteDashboard|null = null;
-  _Instalacion: InstalacionDashboard|null = null;
+  _Cliente: ClienteDashboard | null = null;
+
+  _valorSeleccionadoInstalacionId: number | null = null;
   _valorSeleccionadoInstalacion: InstalacionOpcion | null = null;
-  // _cargaDeDatosInstalacionTerminada: boolean = true;
+
   _modalNewInstVisible = false;
 
-  constructor(){
+  constructor() {
     this.imagenCliente$ = of(this.imagenClienteRuta + 'no-image.jpeg');
-    this.clienteId$ = this.#routeService.params.pipe(map((p)=>p['idCliente']));
-    this.instalacionId$ = this.#routeService.children[0].params.pipe(map((p)=>p['idInstalacion']));
-  }
 
-  ngOnInit(){
-    this.clienteId$.subscribe({
-        next: (next)=>{
-          this.mActualizaCliente(next);
-        },
-        error: (error)=>{console.log(error)},
-        complete: ()=> {}
-      }
+    this.clienteId$ = this.#routeService.params.pipe(
+      map((p) => p['idCliente'])
+    );
+
+    this.instalacionId$ = this.#routeService.firstChild?.params.pipe(
+      map(p => Number(p['idInstalacion']))
     );
   }
 
-  mActualizaCliente(idCliente:number){
-    this.#cliente.mObtenerCliente(idCliente).subscribe({
-        next: (clienteNext)=>{
-          this._Cliente = clienteNext;
-          let idInst = +this.#routeService.children[0].snapshot.paramMap.get('idInstalacion')!;
-          if(idInst == 0){
-            idInst = clienteNext?.arrInstalaciones[0]?.idInstalacion??0;
-            this.SelectOnChange({target:{value:clienteNext?.arrInstalaciones[0]??undefined}});
+  ngOnInit(): void {
+    this.clienteId$.subscribe(id => this.mActualizaCliente(id));
+  }
+
+  private tryNavigate(instId: number, seccion: string) {
+    setTimeout(() => {
+      this.#routerService.navigate([instId, seccion], { relativeTo: this.#routeService })
+        .catch(() => {
+          const idCliente = this.#routeService.snapshot.paramMap.get('idCliente');
+          if (idCliente) {
+            this.#routerService.navigate(['/clientes', idCliente, instId, seccion]);
           }
-          //console.log(idInst);
-          this._valorSeleccionadoInstalacion = clienteNext?.arrInstalaciones.find(ins => ins.idInstalacion === idInst) ?? null;
-          // if(this.#routeService.children[0].snapshot.paramMap.get('idInstalacion') == '0' && clienteNext.arrInstalaciones.length > 0)
-          //   this.#routerService.navigate([clienteNext.arrInstalaciones[0].idInstalacion],{ relativeTo: this.#routeService});
-
-          
-          // if(this._Cliente.arrInstalaciones.length>0){
-          //   this.nuevaSeleccionInstalacion(this._Cliente.arrInstalaciones[0].idInstalacion);
-          // }else{
-            
-          // }
-        },
-        error: (error)=>{console.log(error)},
-        complete: ()=> {}
-      }
-    );
+        });
+    }, 0);
   }
 
-  SelectOnChange(event:any){
-     const selectedValue = event.idInstalacion;
-     const pathAdicional = this.#routeService.children[0]?.children[0]?.snapshot?.url?.map(u=>u.path)??[];
-     this.#routerService.navigate([selectedValue].concat(["Instalaciones"]),{ relativeTo: this.#routeService});
+  mActualizaCliente(idCliente: number) {
+    this.#cliente.mObtenerCliente(idCliente).subscribe({
+      next: (clienteData) => {
+        this._Cliente = clienteData;
+        const primera = clienteData.arrInstalaciones?.[0] ?? null;
+
+        const instUrl = Number(this.#routeService.firstChild?.snapshot.paramMap.get('idInstalacion')) || 0;
+
+        if (!instUrl || !clienteData.arrInstalaciones.some(i => i.idInstalacion === instUrl)) {
+          if (primera) {
+            this._valorSeleccionadoInstalacion = primera;
+            this._valorSeleccionadoInstalacionId = primera.idInstalacion;
+
+            this.#cdr.detectChanges();
+            this.tryNavigate(primera.idInstalacion, 'Instalaciones');
+          }
+        } else {
+          this._valorSeleccionadoInstalacion =
+            clienteData.arrInstalaciones.find(i => i.idInstalacion === instUrl) ?? null;
+
+          this._valorSeleccionadoInstalacionId =
+            this._valorSeleccionadoInstalacion?.idInstalacion ?? null;
+
+          this.#cdr.detectChanges();
+        }
+      }
+    });
+  }
+
+  SelectOnChangeById(newId: number) {
+    if (!newId) return;
+
+    this._valorSeleccionadoInstalacionId = newId;
+    this._valorSeleccionadoInstalacion =
+      this._Cliente?.arrInstalaciones.find(i => i.idInstalacion === newId) ?? null;
+
+    this.#cdr.detectChanges();
+
+    const seccionActual =
+      this.#routeService.firstChild?.firstChild?.snapshot?.url?.[0]?.path ||
+      this.#routeService.firstChild?.snapshot?.url?.[0]?.path ||
+      'Instalaciones';
+
+    this.tryNavigate(newId, seccionActual);
+  }
+
+  SelectOnChange(event: any) {
+    const id = event?.idInstalacion ?? Number(event) ?? null;
+    if (id) this.SelectOnChangeById(id);
+  }
+
+  GuardaInfoInstalacion(event: InstalacionModel) {
+    event.idCliente = this._Cliente?.cClienteInfo?.idCliente ?? 0;
+    event.idClienteNavigation = new ClienteModel();
+
+    this.#instalacionService.mNuevaInstalacion(event).subscribe({
+      next: response => {
+        if (response.exito) {
+          this.#tostadaService.mostrarExito('Instalación guardada con éxito.');
+          this.mActualizaCliente(event.idCliente);
+          this._modalNewInstVisible = false;
+        } else {
+          this.#tostadaService.mostrarError('Error: ' + response.mensaje);
+        }
+      },
+      error: () => this.#tostadaService.mostrarError('Error en el guardado.')
+    });
   }
 
   ngOnDestroy(): void {
     this.#dashboardService._Instalacion = undefined;
-  }
-
-  GuardaInfoInstalacion($event: InstalacionModel) {
-    $event.idCliente = this._Cliente?.cClienteInfo?.idCliente??0;
-    $event.idClienteNavigation = new ClienteModel();
-    this.#instalacionService.mNuevaInstalacion($event).subscribe({
-      next: (response) => {
-        if(response.exito){
-          this.#tostadaService.mostrarExito('Instalación guardada con éxito.');
-          this.mActualizaCliente($event.idCliente);
-          this._modalNewInstVisible = false;
-          
-        }else{
-          this.#tostadaService.mostrarError('Error al guardar instalación: ' + response.mensaje);
-        }
-      },
-      error: (error) => {
-          this.#tostadaService.mostrarError('Error al guardar instalación.');
-      }
-    });
-  }
-  compareByOptionId(option1: InstalacionOpcion, option2: InstalacionOpcion): boolean {
-    return option1 && option2 && option1.idInstalacion === option2.idInstalacion;
   }
 }

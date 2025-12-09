@@ -36,6 +36,7 @@
     "@coreui/icons": "^3.0.1",
     "@coreui/icons-angular": "~5.4.5",
     "@coreui/utils": "^2.0.2",
+    "@microsoft/signalr": "^10.0.0",
     "chart.js": "^4.4.8",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-datalabels": "^2.2.0",

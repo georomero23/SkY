@@ -23,59 +23,65 @@ export const routes: Routes = [
       },
       {
         path: ':idCliente',
-        loadComponent: () => import('./dashboard-cliente/dashboard-cliente.component').then(m => m.DashboardClienteComponent),
-        // pathMatch: 'full',
-        children:[
+        loadComponent: () =>
+          import('./dashboard-cliente/dashboard-cliente.component')
+            .then(m => m.DashboardClienteComponent),
+        children: [
           {
             path: '',
-            redirectTo: '0',
-            pathMatch: 'full',
-            data: {
-              title: 'Clientes'
-            },
+            redirectTo: 'Instalaciones',
+            pathMatch: 'full'
           },
           {
             path: ':idInstalacion',
-            //redirectTo: ':idInstalacion/instalaciones',
-            data: {
-              title: ''
-            },
             children: [
               {
+                path: '',
+                redirectTo: 'Instalaciones',
+                pathMatch: 'full'
+              },
+              {
                 path: 'Instalaciones',
-                loadComponent: ()=> import('./dashboard-cliente/instalacion-dashboard/instalacion-dashboard.component').then(m => m.InstalacionDashboardComponent)
-                //,pathMatch: 'full'
+                loadComponent: () =>
+                  import('./dashboard-cliente/instalacion-dashboard/instalacion-dashboard.component')
+                    .then(m => m.InstalacionDashboardComponent),
               },
               {
                 path: 'InstalacionInfo',
                 canDeactivate: [PendingChangesGuard],
-                loadComponent: ()=> import('./dashboard-cliente/info-instalacion/info-instalacion.component').then(m => m.InfoInstalacionComponent)
-                //,pathMatch: 'full'
-              }, 
+                loadComponent: () =>
+                  import('./dashboard-cliente/info-instalacion/info-instalacion.component')
+                    .then(m => m.InfoInstalacionComponent),
+              },
               {
                 path: 'Estadisticas',
-                loadComponent: ()=> import('./dashboard-cliente/estadisticas-dashboard/estadisticas-dashboard.component').then(m => m.EstadisticasDashboardComponent),
-                //pathMatch: 'full'
+                loadComponent: () =>
+                  import('./dashboard-cliente/estadisticas-dashboard/estadisticas-dashboard.component')
+                    .then(m => m.EstadisticasDashboardComponent),
               },
               {
                 path: 'Recibos',
-                loadComponent: ()=> import('./dashboard-cliente/recibos-dashboard/recibos-dashboard.component').then(m => m.RecibosDashboardComponent),
-                //pathMatch: 'full'
+                loadComponent: () =>
+                  import('./dashboard-cliente/recibos-dashboard/recibos-dashboard.component')
+                    .then(m => m.RecibosDashboardComponent),
               },
               {
                 path: 'Reportes',
-                loadComponent: ()=> import('./dashboard-cliente/reportes-dashboard/reportes-dashboard.component').then(m => m.ReportesDashboardComponent),
-                //pathMatch: 'full'
+                loadComponent: () =>
+                  import('./dashboard-cliente/reportes-dashboard/reportes-dashboard.component')
+                    .then(m => m.ReportesDashboardComponent),
               },
               {
                 path: 'Polizas',
-                loadComponent: ()=> import('./dashboard-cliente/polizas-dashboard/polizas-dashboard.component').then(m => m.PolizasDashboardComponent),
-                //pathMatch: 'full'
+                loadComponent: () =>
+                  import('./dashboard-cliente/polizas-dashboard/polizas-dashboard.component')
+                    .then(m => m.PolizasDashboardComponent),
               },
               {
                 path: 'Documentos',
-                loadComponent: ()=> import('./dashboard-cliente/documentos/documentos.component').then(m => m.DocumentosComponent),
-                //pathMatch: 'full'
+                loadComponent: () =>
+                  import('./dashboard-cliente/documentos/documentos.component')
+                    .then(m => m.DocumentosComponent),
               }
             ]
           }
@@ -84,4 +90,3 @@ export const routes: Routes = [
     ]
   }
 ];
-

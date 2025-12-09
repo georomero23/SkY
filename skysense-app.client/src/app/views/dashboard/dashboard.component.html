@@ -370,7 +370,9 @@
                   ></span>
                 </td>
                 <td>
-                  <div><a href="{{`#/clientes/${inst.idCliente}/${inst.idInstalacion}`}}">{{ inst.nombre || 'SIN NOMBRE' }}</a></div>
+                  <div>
+                    <a (click)="abrirInstalacion(inst)" style="cursor:pointer">{{ inst.nombre }}</a>
+                  </div>
                   <!-- <div class="small text-body-secondary text-nowrap">
                   <span>
                       {{ inst.state }} | Registered: {{ inst.registered }}

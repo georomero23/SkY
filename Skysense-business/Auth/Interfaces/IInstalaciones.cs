@@ -43,7 +43,7 @@ namespace Skysense_business.Auth.Interfaces
         KPIInstalacionesResult[] mObtenKpiAnual(int anno, bool annoGarantia, int? mes);
         void mInsertaModificaRecibo(CRecibo recibo);
         Task<ReporteDatos> mObtenDatosReporteMensual(int idInstalacion, int anno, int mes);
-        Task mSubeReporteAutomatico(int idInstalacion, IFormFile archivo, DateOnly dateOnly, decimal panelGeneracion, decimal ahorroAcumulado, decimal ahorroAmbiental, decimal consumoCFE);
+        Task mSubeReporteAutomatico(int idInstalacion, IFormFile archivo, DateOnly dateOnly, decimal panelGeneracion, decimal ahorroAcumulado, decimal ahorroAmbiental, decimal consumoCFE, bool bajaTension2);
         Task<CReporteAutomaticoConfig> mObtenConfiguracionReportesAutomaticos(int idInstalacion);
         Task<bool> mGuardaConfiguracionReportesAutomaticos(int idInstalacion, CReporteAutomaticoConfig config);
     }

@@ -642,7 +642,7 @@ namespace Skysense_business.Auth.Implementation
             {
                 throw new ErrorAlCliente("No se puede filtrar por mes cuando se selecciona año de garantía.");
             }
-            if (anno < 2000 || anno > DateTime.Now.Year)
+            if (anno < 2000 || anno > DateTime.Now.Year + 10)
             {
                 throw new ErrorAlCliente("El año debe de estar entre 2000 y el año actual.");
             }
@@ -650,7 +650,7 @@ namespace Skysense_business.Auth.Implementation
             return this._instalaciones.mObtenKpiAnual(anno, annoGarantia, mes);
         }
 
-        public async Task mSubeReporteAutomatico(int idInstalacion, IFormFile archivo, DateOnly dateOnly, decimal panelGeneracion, decimal ahorroAcumulado, decimal ahorroAmbiental, decimal consumoCFE)
+        public async Task mSubeReporteAutomatico(int idInstalacion, IFormFile archivo, DateOnly dateOnly, decimal panelGeneracion, decimal ahorroAcumulado, decimal ahorroAmbiental, decimal consumoCFE, bool bajaTension2)
         {
             var instalacion = this.mObtenInstalacionCompleta(idInstalacion);
             var cliente = instalacion.IdClienteNavigation;
@@ -706,7 +706,6 @@ namespace Skysense_business.Auth.Implementation
         }
 
 
-
         public async Task<ReporteDatos> mObtenDatosReporteMensual(int idInstalacion, int anno, int mes)
         {
             if (mes < 1 || mes > 12)
@@ -720,7 +719,8 @@ namespace Skysense_business.Auth.Implementation
 
             var instalacion = this.mObtenInstalacionCompleta(idInstalacion);
             var cliente = instalacion.IdClienteNavigation;
-            var reciboInfo = this._instalaciones.mObtenRecibosPorInstalacion(idInstalacion, anno).FirstOrDefault(r => r.MesRecibo.Year == anno && r.MesRecibo.Month == mes);
+            var reciboInfo = this._instalaciones.mObtenRecibosPorInstalacion(idInstalacion, anno)
+                               .FirstOrDefault(r => r.MesRecibo.Year == anno && r.MesRecibo.Month == mes);
             if (reciboInfo == null)
             {
                 throw new ErrorAlCliente("No se ha encontrado el Recibo para esta instalación en el mes y año seleccionados.");
@@ -733,20 +733,23 @@ namespace Skysense_business.Auth.Implementation
             {
                 throw new ErrorAlCliente("La instalación no tiene una tarifa asignada, por lo que no se pueden obtener las tarifas.");
             }
+
             var tarifas = this._interfaz.mObtenTarifasDivisiones(mes, anno, (int)instalacion.Zona, instalacion.IdCatalogoTarifa).FirstOrDefault();
             if (tarifas == null)
             {
                 throw new ErrorAlCliente("No se han encontrado tarifas para la instalación en el mes y año seleccionados.");
             }
+
             var generacion = await this.mObtenGeneracionDiaria(cliente.IdCliente, idInstalacion, anno, mes);
             if (generacion == null)
             {
                 throw new ErrorAlCliente("No se ha podido obtener la generación para la instalación en el mes y año seleccionados.");
             }
+
             var ahorroAcumulado = this._instalaciones.ObtenAhorroAcumulado(idInstalacion, anno, mes);
             if (ahorroAcumulado == null)
             {
-                if(instalacion.InicioOperaciones.Value.Year == anno && instalacion.InicioOperaciones.Value.Month == mes)
+                if (instalacion.InicioOperaciones.Value.Year == anno && instalacion.InicioOperaciones.Value.Month == mes)
                 {
                     ahorroAcumulado = 0;
                 }
@@ -755,12 +758,13 @@ namespace Skysense_business.Auth.Implementation
                     throw new ErrorAlCliente("No se cuenta con datos de Ahorro acumulado del periodo anterior.");
                 }
             }
+
             var configReporte = await this.mObtenConfiguracionReportesAutomaticos(idInstalacion);
             var umbralFactorPotencia = configReporte.UmbralFp ?? 0.90m;
             var factorPotenciaDefault = configReporte.FpDefault ?? 0.90m;
             var fechaMes = new DateOnly(anno, mes, 1);
             var diasFestivos = this._interfaz.mObtenDiasFestivos(anno).Where(d => d.Month == mes).Select(d => d.Day).ToArray();
-            var modulo7Domingos = (8 - ((byte)fechaMes.DayOfWeek)) % 7;//*
+            var modulo7Domingos = (8 - ((byte)fechaMes.DayOfWeek)) % 7;
             var generacionTotalFestivos = generacion.datos.Where(g => ((g.iDia % 7) == modulo7Domingos) || diasFestivos.Contains(g.iDia)).Sum(d => d.generacionTotal);
             var generacionTotal = generacion.datos.Sum(d => d.generacionTotal);
             var generacionTotalLaborables = generacionTotal - generacionTotalFestivos;
@@ -770,20 +774,22 @@ namespace Skysense_business.Auth.Implementation
             var demandaEquivalenteSPaneles = Math.Ceiling((double)(reciboKwh + generacionTotal) / (24 * .57 * fechaMes.AddMonths(1).AddDays(-1).Day));
             var factorDePotencia = reciboKwh == 0 ? factorPotenciaDefault : (decimal)(1 / Math.Sqrt(1 + Math.Pow((double)((reciboInfo.ReactivosKvArh ?? 0) / reciboKwh), 2)));
             var factorDePotenciaConGeneracion = (reciboKwh + generacionTotal) == 0 ? factorPotenciaDefault : (decimal)(1 / Math.Sqrt(1 + Math.Pow((double)(reciboInfo.ReactivosKvArh ?? 0) / (double)(reciboKwh + generacionTotal), 2)));
+
             var repDatos = new ReporteDatos()
             {
                 IdInstalacion = idInstalacion,
                 iAnno = anno,
                 iMes = mes,
-                Cliente = instalacion.Nombre??cliente.Nombre??"",
+                Cliente = instalacion.Nombre ?? cliente.Nombre ?? "",
                 Direccion = instalacion.Ubicacion ?? "",
                 RPU = instalacion.Rpu ?? "",
-                Periodo = fechaMes.AddDays(-1).ToString("dd MMM yy") + " - " + new DateOnly(anno, mes + 1, 1).AddDays(-1).ToString("dd MMM yy"),//*
-                NombreEnRecibo = configReporte.NombreEnRecibo ??  instalacion.Nombre ?? "",
+                Periodo = fechaMes.AddDays(-1).ToString("dd MMM yy") + " - " + new DateOnly(anno, mes + 1, 1).AddDays(-1).ToString("dd MMM yy"),
+                NombreEnRecibo = configReporte.NombreEnRecibo ?? instalacion.Nombre ?? "",
                 CapacidadInstalada = instalacion.PotenciaInstalada ?? 0,
                 GeneracionPeriodo = generacionTotal,
                 ConsumoTotalPorcentaje = 100
             };
+
             repDatos.ConsumoTotal = repDatos.GeneracionPeriodo + reciboKwh;
             repDatos.ConsumoPaneles = repDatos.GeneracionPeriodo;
             repDatos.ConsumoCFE = repDatos.ConsumoTotal - repDatos.ConsumoPaneles;
@@ -804,7 +810,7 @@ namespace Skysense_business.Auth.Implementation
             repDatos.IntermediaAhorro = repDatos.IntermediaSPaneles - repDatos.IntermediaCPaneles;
 
             repDatos.PuntaCPaneles = (reciboInfo.KWhPunta ?? 0) * (tarifas.ValorEnergiaPunta ?? 0);
-            repDatos.PuntaSPaneles = repDatos.PuntaCPaneles;//(tarifas.ValorEnergiaPunta ?? 0) * (reciboInfo.KWhPunta ?? 0);
+            repDatos.PuntaSPaneles = repDatos.PuntaCPaneles;
             repDatos.PuntaAhorro = repDatos.PuntaSPaneles - repDatos.PuntaCPaneles;
 
             repDatos.TransmisionCPaneles = reciboKwh * (tarifas.ValorTransmision ?? 0);
@@ -834,12 +840,56 @@ namespace Skysense_business.Auth.Implementation
             repDatos.EnergiaAhorro = repDatos.EnergiaSPaneles - repDatos.EnergiaCPaneles;
 
             repDatos.FactorPotenciaCPaneles = ((tarifas.ValorOpSsb ?? 0) + repDatos.EnergiaCPaneles) * Math.Round((decimal)(factorDePotencia >= umbralFactorPotencia ? -.25 : -.6) * (1 - umbralFactorPotencia / factorDePotencia), 3);
-            repDatos.FactorPotenciaSPaneles = ((tarifas.ValorOpSsb ?? 0) + repDatos.EnergiaSPaneles) * Math.Round((decimal)(factorDePotenciaConGeneracion >= umbralFactorPotencia ? -.25 : -.6) * (1 - umbralFactorPotencia / factorDePotenciaConGeneracion ), 3);
+            repDatos.FactorPotenciaSPaneles = ((tarifas.ValorOpSsb ?? 0) + repDatos.EnergiaSPaneles) * Math.Round((decimal)(factorDePotenciaConGeneracion >= umbralFactorPotencia ? -.25 : -.6) * (1 - umbralFactorPotencia / factorDePotenciaConGeneracion), 3);
             repDatos.FactorPotenciaAhorro = repDatos.FactorPotenciaSPaneles - repDatos.FactorPotenciaCPaneles;
 
             repDatos.SubtotalCPaneles = repDatos.FijoCPaneles + repDatos.EnergiaCPaneles + repDatos.FactorPotenciaCPaneles;
             repDatos.SubtotalSPaneles = repDatos.FijoSPaneles + repDatos.EnergiaSPaneles + repDatos.FactorPotenciaSPaneles;
             repDatos.SubtotalAhorro = repDatos.SubtotalSPaneles - repDatos.SubtotalCPaneles;
+
+            decimal sumaConceptosC = repDatos.FijoCPaneles
+                + repDatos.BaseCPaneles
+                + repDatos.IntermediaCPaneles
+                + repDatos.PuntaCPaneles
+                + repDatos.TransmisionCPaneles
+                + repDatos.CENACECPaneles
+                + repDatos.SCNMEMCPaneles
+                + repDatos.DistribucionCPaneles;
+
+            decimal sumaConceptosS = repDatos.FijoSPaneles
+                + repDatos.BaseSPaneles
+                + repDatos.IntermediaSPaneles
+                + repDatos.PuntaSPaneles
+                + repDatos.TransmisionSPaneles
+                + repDatos.CENACESPaneles
+                + repDatos.SCNMEMSPaneles
+                + repDatos.DistribucionSPaneles;
+
+            repDatos.BajaTension2C = Math.Round(sumaConceptosC * 0.02m, 2);
+            repDatos.BajaTension2S = Math.Round(sumaConceptosS * 0.02m, 2);
+            repDatos.BajaTension2Ahorro = repDatos.BajaTension2S - repDatos.BajaTension2C;
+
+            bool bajaTension2Enabled = false;
+            try
+            {
+                var prop = configReporte?.GetType().GetProperty("BajaTension2");
+                if (prop != null)
+                {
+                    var val = prop.GetValue(configReporte);
+                    bajaTension2Enabled = val is bool b && b;
+                }
+            }
+            catch
+            {
+                bajaTension2Enabled = false;
+            }
+
+            if (bajaTension2Enabled)
+            {
+                repDatos.SubtotalCPaneles += repDatos.BajaTension2C;
+                repDatos.SubtotalSPaneles += repDatos.BajaTension2S;
+                repDatos.SubtotalAhorro = repDatos.SubtotalSPaneles - repDatos.SubtotalCPaneles;
+            }
 
             repDatos.DAPCPaneles = (configReporte.PorcentajeDap ?? 0) * repDatos.SubtotalCPaneles;
             repDatos.DAPSPaneles = (configReporte.PorcentajeDap ?? 0) * repDatos.SubtotalSPaneles;
@@ -859,7 +909,7 @@ namespace Skysense_business.Auth.Implementation
             repDatos.PagoSinPaneles = repDatos.TotalSPaneles;
             repDatos.PagoConPaneles = repDatos.TotalCPaneles;
             repDatos.Ahorro = repDatos.PagoSinPaneles - repDatos.PagoConPaneles;
-            repDatos.PorcentajeAhorro = repDatos.Ahorro / repDatos.PagoSinPaneles * 100;
+            repDatos.PorcentajeAhorro = repDatos.PagoSinPaneles == 0 ? 0 : repDatos.Ahorro / repDatos.PagoSinPaneles * 100;
 
             #region Aporte al medio ambiente
 
@@ -875,7 +925,7 @@ namespace Skysense_business.Auth.Implementation
             repDatos.GeneracionDiaria = generacion.datos.Select(d => d.generacionTotal).ToArray();
             repDatos.HistoricoGenPVEsteAnnio = (await this.mObtenGeneracion(instalacion.IdCliente, idInstalacion, anno)).arrValoresReales.Take(mes).Select(v => v ?? 0).ToArray();
             repDatos.HistoricoGenPVAnnioAnterior = (instalacion.InicioOperaciones?.Year ?? 50000) >= anno ? null :
-                (await this.mObtenGeneracion(instalacion.IdCliente, idInstalacion, anno-1)).arrValoresReales.Select(v => v ?? 0).ToArray();
+                (await this.mObtenGeneracion(instalacion.IdCliente, idInstalacion, anno - 1)).arrValoresReales.Select(v => v ?? 0).ToArray();
 
             repDatos.HistoricoConsumo = this._instalaciones.mObtenConsumoHistorico(idInstalacion, anno);
             repDatos.HistoricoFacturas = this._instalaciones.mObtenFacturasHistorico(idInstalacion, anno);
@@ -883,8 +933,8 @@ namespace Skysense_business.Auth.Implementation
             #endregion
 
             return repDatos;
-
         }
+
     }
 
 }
