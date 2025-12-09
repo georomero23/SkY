@@ -102,10 +102,7 @@ export class ReporteAutomaticoConfig{
   bajaTension2: boolean = false;
 
   constructor(init?: Partial<ReporteAutomaticoConfig>) {
-    if (init) {
-      Object.assign(this, init);
-      this.bajaTension2 = !!init.bajaTension2;
-    }
+    if (init) Object.assign(this, init);
   }
 
 }

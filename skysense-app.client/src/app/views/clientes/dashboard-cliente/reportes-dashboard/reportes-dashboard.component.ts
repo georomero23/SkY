@@ -116,13 +116,9 @@ export class ReportesDashboardComponent {
     this.#instalacionService.mObtenConfigReporteAutomatico(this.#DashboardService._Instalacion!.idInstalacion).subscribe({
       next: (data) => {
         if (data.exito) {
-
-          this.configRA = { ...data.data };
+          this.configRA = new ReporteAutomaticoConfig(data.data);
           this.configRA.porcentajeDapNumeros = this.configRA.porcentajeDap * 100;
           this.configRA.fpDefaultNumeros = this.configRA.fpDefault * 100;
-          this.configRA.bajaTension2 = !!data.data.bajaTension2;
-
-
 
         } else {
           this.#tostadaService.GeneraAlertaToast(new ToastModel("Error al obtener configuración", data.mensaje, 5, NivelAlerta.Advertencia));
@@ -132,6 +128,10 @@ export class ReportesDashboardComponent {
         this.#tostadaService.GeneraAlertaToast(new ToastModel("Error", "Error inesperado.", 5, NivelAlerta.Peligro));
       }
     });
+  }
+
+  private toBoolean(value: any): boolean {
+    return value === true || value === 'true' || value === 1 || value === '1';
   }
 
   cargarReportes(file: File) {

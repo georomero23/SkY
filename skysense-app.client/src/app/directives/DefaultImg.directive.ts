@@ -29,9 +29,9 @@ export class DefaultImgDirective {
     private renderer: Renderer2
   ) {}
 
-  //ngOnChanges(changes: SimpleChanges): void {
-  //  this.initImage();
-  //}
+  ngOnChanges(changes: SimpleChanges): void {
+  this.initImage();
+  }
 
   private initImage() {
     // do not evaluate on SSR

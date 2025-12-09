@@ -180,9 +180,8 @@
     <app-reporte-automatico [idInstalacion]="_idInstalacion"
                             [iAnno]="_reporteAutomaticoAnno"
                             [iMes]="_reporteAutomaticoMes"
-                            [mostrarBT2]="!!configRA.bajaTension2">
+                            [mostrarBT2]="configRA.bajaTension2 === true">
     </app-reporte-automatico>
-
   </c-modal-body>
   <c-modal-footer>
     <button cButton color="primary" *ngIf="!_guardando" (click)="exportarPDF()">Exportar PDF</button>
