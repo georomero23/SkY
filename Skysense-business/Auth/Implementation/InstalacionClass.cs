@@ -921,9 +921,18 @@ namespace Skysense_business.Auth.Implementation
 
             #region Gráficas
 
-            repDatos.PorcentajeCumplimiento = mObtenKpiAnual(anno, false, mes).FirstOrDefault(i => i.IdInstalacion == idInstalacion)?.Porcentaje ?? 0;
+            var generacionAnioActual = await this.mObtenGeneracion(instalacion.IdCliente, idInstalacion, anno);
+            var porcentajeCumplimiento = mObtenKpiAnual(anno, false, mes).FirstOrDefault(i => i.IdInstalacion == idInstalacion)?.Porcentaje ?? 0;
+            var generacionGarantizadaMes = generacionAnioActual.arrValoresGarantizados.FirstOrDefault(v => v.Mes == mes)?.GeneracionGarantizada ?? 0;
+
+            if (porcentajeCumplimiento == 0 && generacionGarantizadaMes > 0)
+            {
+                porcentajeCumplimiento = Math.Round(repDatos.GeneracionPeriodo / generacionGarantizadaMes * 100, 2);
+            }
+
+            repDatos.PorcentajeCumplimiento = porcentajeCumplimiento;
             repDatos.GeneracionDiaria = generacion.datos.Select(d => d.generacionTotal).ToArray();
-            repDatos.HistoricoGenPVEsteAnnio = (await this.mObtenGeneracion(instalacion.IdCliente, idInstalacion, anno)).arrValoresReales.Take(mes).Select(v => v ?? 0).ToArray();
+            repDatos.HistoricoGenPVEsteAnnio = generacionAnioActual.arrValoresReales.Take(mes).Select(v => v ?? 0).ToArray();
             repDatos.HistoricoGenPVAnnioAnterior = (instalacion.InicioOperaciones?.Year ?? 50000) >= anno ? null :
                 (await this.mObtenGeneracion(instalacion.IdCliente, idInstalacion, anno - 1)).arrValoresReales.Select(v => v ?? 0).ToArray();
 
